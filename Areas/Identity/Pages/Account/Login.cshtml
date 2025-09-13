@@ -1,0 +1,37 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+@* @section Styles {
+    <link rel="stylesheet" href="~/css/style1_login.css" asp-append-version="true" />
+} *@
+
+<div class="login-box">
+    <span class="text1">HACKA</span><span class="text2">THON</span>
+    <h2>เข้าสู่ระบบ</h2>
+
+    <form id="account" method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <label asp-for="Input.Email"></label>
+        <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="E-mail" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+        <label asp-for="Input.Password"></label>
+        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" placeholder="Password" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+
+        <button id="login-submit" type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

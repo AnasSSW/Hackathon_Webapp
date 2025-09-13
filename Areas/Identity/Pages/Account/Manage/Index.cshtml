@@ -1,0 +1,274 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "โปรไฟล์ของฉัน";
+    // THIS IS THE KEY CHANGE: Point to the new, clean layout for the manage section.
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/manage_profile.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* This style is now needed here to override the default body margin */
+        body {
+            padding: 0; /* Reset any padding from other potential styles */
+        }
+
+        /* Styles for the new back button */
+        .save-button-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px; /* Adds space between buttons */
+            align-items: center;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #e5e7eb;
+            color: #374151;
+            border: none;
+        }
+
+            .back-button:hover {
+                background-color: #d1d5db;
+                color: #1f2937;
+            }
+    </style>
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="container">
+    <form id="profile-form" method="post" enctype="multipart/form-data">
+        <div class="profile-card">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-image">
+                    <img src="@(Model.Input.ProfilePictureUrl ?? "https://via.placeholder.com/150x150/4f46e5/ffffff?text=" + Model.Input.FirstName?.FirstOrDefault() + Model.Input.LastName?.FirstOrDefault())" alt="Profile Picture" id="profile-img">
+                    <div class="image-upload-overlay" onclick="document.getElementById('imageUpload').click()">
+                        <i class="fas fa-camera"></i>
+                        <span>เปลี่ยนรูป</span>
+                    </div>
+                    <input asp-for="Input.ProfilePictureFile" id="imageUpload" accept="image/*" style="display: none;">
+                </div>
+                <div class="profile-info">
+                    <h1 class="name">@Model.Input.FirstName @Model.Input.LastName</h1>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="section">
+                <h3 class="section-title">
+                    <i class="fas fa-address-book"></i>
+                    ข้อมูลติดต่อ
+                </h3>
+                <div class="contact-grid">
+                    <div class="form-group"><i class="fas fa-user"></i><div><span class="label">ชื่อจริง</span><input asp-for="Input.FirstName" class="form-control" /></div></div>
+                    <div class="form-group"><i class="fas fa-user"></i><div><span class="label">นามสกุล</span><input asp-for="Input.LastName" class="form-control" /></div></div>
+                    <div class="form-group"><i class="fas fa-envelope"></i><div><span class="label">อีเมล</span><input asp-for="Username" class="form-control" disabled /></div></div>
+                    <div class="form-group"><i class="fas fa-phone"></i><div><span class="label">โทรศัพท์</span><input asp-for="Input.PhoneNumber" class="form-control" /></div></div>
+                    <div class="form-group"><i class="fas fa-map-marker-alt"></i><div><span class="label">ที่อยู่</span><input asp-for="Input.Address" class="form-control" placeholder="เช่น กรุงเทพ, ประเทศไทย" /></div></div>
+                    <div class="form-group"><i class="fab fa-github"></i><div><span class="label">GitHub</span><input asp-for="Input.GitHubUsername" class="form-control" placeholder="เช่น github.com/username" /></div></div>
+                </div>
+            </div>
+
+            <!-- Skills Section -->
+            <div class="section">
+                <h3 class="section-title">
+                    <i class="fas fa-code"></i>
+                    ทักษะและความสามารถ
+                </h3>
+                <div id="skills-list-container">
+                    <!-- Skills will be rendered here by JavaScript -->
+                </div>
+                <button type="button" id="add-skill-btn" class="add-skill-button">
+                    <i class="fas fa-plus"></i> เพิ่มทักษะ
+                </button>
+                <input type="hidden" asp-for="Input.SkillsJson" id="skills-json-hidden" />
+            </div>
+
+            <!-- Additional Info -->
+            <div class="section">
+                <h3 class="section-title"><i class="fas fa-info-circle"></i> ข้อมูลเพิ่มเติม</h3>
+                <div class="info-grid">
+                    <div class="form-group"><i class="fas fa-birthday-cake"></i><div><span class="label">วันเกิด</span><input asp-for="Input.DateOfBirth" class="form-control" type="date" /></div></div>
+                    <div class="form-group"><i class="fas fa-language"></i><div><span class="label">ภาษา</span><input asp-for="Input.Languages" class="form-control" placeholder="ไทย, อังกฤษ" /></div></div>
+                    <div class="form-group"><i class="fas fa-graduation-cap"></i><div><span class="label">การศึกษา</span><input asp-for="Input.Education" class="form-control" placeholder="ปริญญาตรี วิศวกรรมคอมพิวเตอร์..." /></div></div>
+                    <div class="form-group"><i class="fas fa-briefcase"></i><div><span class="label">ประสบการณ์</span><input asp-for="Input.Experience" class="form-control" placeholder="5+ ปีในการพัฒนาเว็บ..." /></div></div>
+                </div>
+            </div>
+
+            <div class="save-button-container">
+                <!-- ADDED THIS NEW LINK AS A BUTTON -->
+                <a asp-controller="Home" asp-action="Index" class="back-button">กลับหน้าหลัก</a>
+                <button id="update-profile-button" type="submit" class="save-button">บันทึกการเปลี่ยนแปลง</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Add Skill Modal -->
+<div id="skill-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-content">
+        <h4 class="modal-title">เพิ่มทักษะใหม่</h4>
+        <div class="modal-form-group">
+            <label for="skill-category">หมวดหมู่</label>
+            <select id="skill-category" class="modal-form-control">
+                <option value="">-- เลือกหมวดหมู่ --</option>
+                <option value="Frontend">Frontend</option>
+                <option value="Backend">Backend</option>
+            </select>
+        </div>
+        <div class="modal-form-group">
+            <label for="skill-name">ทักษะ</label>
+            <select id="skill-name" class="modal-form-control" disabled>
+                <option value="">-- เลือกหมวดหมู่ก่อน --</option>
+            </select>
+        </div>
+        <div class="modal-form-group">
+            <label for="skill-description">คำอธิบาย</label>
+            <textarea id="skill-description" class="modal-form-control" rows="3" placeholder="อธิบายประสบการณ์ของคุณกับทักษะนี้..."></textarea>
+        </div>
+        <div class="modal-actions">
+            <button type="button" id="cancel-skill-btn" class="modal-button cancel">ยกเลิก</button>
+            <button type="button" id="save-skill-btn" class="modal-button save">บันทึกทักษะ</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Existing Image Upload Logic ---
+            const imageUpload = document.getElementById('imageUpload');
+            const profileImg = document.getElementById('profile-img');
+            if (imageUpload && profileImg) {
+                imageUpload.addEventListener('change', function (event) {
+                    const file = event.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) { profileImg.src = e.target.result; };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // --- NEW SKILLS MANAGEMENT LOGIC ---
+            const skillsListContainer = document.getElementById('skills-list-container');
+            const skillsJsonHiddenInput = document.getElementById('skills-json-hidden');
+            let skills = JSON.parse(skillsJsonHiddenInput.value || '[]');
+
+            const skillOptions = {
+                Frontend: ["HTML/CSS", "JavaScript", "TypeScript", "React", "Angular", "Vue.js", "Tailwind CSS"],
+                Backend: ["C#", "ASP.NET Core", "Node.js", "Python", "Java", "SQL Server", "MySQL", "PHP"]
+            };
+
+            const modal = document.getElementById('skill-modal');
+            const addSkillBtn = document.getElementById('add-skill-btn');
+            const cancelSkillBtn = document.getElementById('cancel-skill-btn');
+            const saveSkillBtn = document.getElementById('save-skill-btn');
+            const categorySelect = document.getElementById('skill-category');
+            const nameSelect = document.getElementById('skill-name');
+            const descriptionTextarea = document.getElementById('skill-description');
+
+            const renderSkills = () => {
+                skillsListContainer.innerHTML = '';
+                if (skills.length === 0) {
+                    skillsListContainer.innerHTML = '<p class="no-skills-text">ยังไม่มีทักษะที่เพิ่มเข้ามา</p>';
+                } else {
+                    skills.forEach((skill, index) => {
+                        const skillElement = document.createElement('div');
+                        skillElement.className = 'skill-display-item';
+                        skillElement.innerHTML = `
+                            <div class="skill-display-info">
+                                <span class="skill-category-badge ${skill.Category.toLowerCase()}">${skill.Category}</span>
+                                <strong>${skill.Name}</strong>
+                                <p>${skill.Description}</p>
+                            </div>
+                            <button type="button" class="remove-skill-btn" data-index="${index}">&times;</button>
+                        `;
+                        skillsListContainer.appendChild(skillElement);
+                    });
+                }
+                skillsJsonHiddenInput.value = JSON.stringify(skills);
+            };
+
+            const openModal = () => {
+                categorySelect.value = '';
+                nameSelect.innerHTML = '<option value="">-- เลือกหมวดหมู่ก่อน --</option>';
+                nameSelect.disabled = true;
+                descriptionTextarea.value = '';
+                modal.style.display = 'flex';
+            };
+
+            const closeModal = () => {
+                modal.style.display = 'none';
+            };
+
+            addSkillBtn.addEventListener('click', openModal);
+            cancelSkillBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+
+            categorySelect.addEventListener('change', () => {
+                const selectedCategory = categorySelect.value;
+                nameSelect.innerHTML = '<option value="">-- เลือกทักษะ --</option>';
+                if (selectedCategory && skillOptions[selectedCategory]) {
+                    skillOptions[selectedCategory].forEach(skillName => {
+                        const option = document.createElement('option');
+                        option.value = skillName;
+                        option.textContent = skillName;
+                        nameSelect.appendChild(option);
+                    });
+                    nameSelect.disabled = false;
+                } else {
+                    nameSelect.disabled = true;
+                }
+            });
+
+            saveSkillBtn.addEventListener('click', () => {
+                const newSkill = {
+                    Category: categorySelect.value,
+                    Name: nameSelect.value,
+                    Description: descriptionTextarea.value
+                };
+
+                if (!newSkill.Category || !newSkill.Name) {
+                    alert('กรุณาเลือกหมวดหมู่และทักษะ');
+                    return;
+                }
+
+                skills.push(newSkill);
+                renderSkills();
+                closeModal();
+            });
+
+            skillsListContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-skill-btn')) {
+                    const indexToRemove = parseInt(e.target.getAttribute('data-index'), 10);
+                    skills.splice(indexToRemove, 1);
+                    renderSkills();
+                }
+            });
+
+            // Initial render
+            renderSkills();
+        });
+    </script>
+}
+

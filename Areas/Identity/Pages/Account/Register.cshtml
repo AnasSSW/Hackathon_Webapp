@@ -1,0 +1,56 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="login-box">
+    <span class="text1">HACKA</span><span class="text2">THON</span>
+    <h2>Register</h2>
+
+    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <div class="name-row">
+            <div class="form-group">
+                <label asp-for="Input.FirstName"></label>
+                <input asp-for="Input.FirstName" class="form-control" placeholder="First name" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.LastName"></label>
+                <input asp-for="Input.LastName" class="form-control" placeholder="Last name" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <label asp-for="Input.PhoneNumber"></label>
+        <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Telephone" />
+        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+
+        <label asp-for="Input.Email"></label>
+        <input asp-for="Input.Email" class="form-control" placeholder="E-mail" autocomplete="username" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+        <label asp-for="Input.Password"></label>
+        <input asp-for="Input.Password" class="form-control" placeholder="Password" autocomplete="new-password" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+        <label asp-for="Input.ConfirmPassword"></label>
+        <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm-password" autocomplete="new-password" />
+        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+
+        <button id="registerSubmit" type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <p class="register-link mt-3">
+        มีบัญชีแล้ว? <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">เข้าสู่ระบบ</a>
+    </p>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

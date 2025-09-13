@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hackathon</title>
+    
+    <!-- This section allows the profile page to add its own stylesheets -->
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- This renders the main content from the profile page -->
+    @RenderBody()
+
+    <!-- This section allows the profile page to add its own scripts -->
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

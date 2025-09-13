@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Hackathon</title>
+    <link rel="stylesheet" href="~/css/style_index.css" asp-append-version="true" />
+
+    <!-- This section allows individual pages to add their own stylesheets -->
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="main-layout">
+    <div class="hero">
+        <div class="header">
+            <div class="logo">
+                <img src="~/img/logo.png" alt="logo">
+                <span class="text1">HACKA</span><span class="text2">THON</span>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="ค้นหา...">
+            </div>
+            <div class="actions">
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </div>
+
+    <!-- The main content from other pages will be rendered here -->
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Hackathon. | แบ่งปันความรู้และแรงบันดาลใจทุกวัน</p>
+            <div class="footer-links">
+                <p>ติดตามเรา <a href="#">About</a> | <a href="#">Contact</a> | <a href="#">Privacy Policy</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- This section allows individual pages to add their own scripts -->
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
