@@ -22,7 +22,7 @@ namespace Hackathon.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Hackathon.Data.ApplicationUser", b =>
+            modelBuilder.Entity("Hackathon.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -169,14 +169,11 @@ namespace Hackathon.Migrations
 
             modelBuilder.Entity("Hackathon.Models.PostParticipant", b =>
                 {
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
@@ -184,7 +181,16 @@ namespace Hackathon.Migrations
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("PostId", "UserId");
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
 
                     b.HasIndex("UserId");
 
@@ -330,8 +336,8 @@ namespace Hackathon.Migrations
 
             modelBuilder.Entity("Hackathon.Models.Post", b =>
                 {
-                    b.HasOne("Hackathon.Data.ApplicationUser", "Author")
-                        .WithMany()
+                    b.HasOne("Hackathon.Models.ApplicationUser", "Author")
+                        .WithMany("CreatedPosts")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.NoAction);
 
@@ -346,10 +352,10 @@ namespace Hackathon.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Hackathon.Data.ApplicationUser", "User")
-                        .WithMany()
+                    b.HasOne("Hackathon.Models.ApplicationUser", "User")
+                        .WithMany("JoinedPosts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -368,7 +374,7 @@ namespace Hackathon.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Hackathon.Data.ApplicationUser", null)
+                    b.HasOne("Hackathon.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -377,7 +383,7 @@ namespace Hackathon.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Hackathon.Data.ApplicationUser", null)
+                    b.HasOne("Hackathon.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -392,7 +398,7 @@ namespace Hackathon.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Hackathon.Data.ApplicationUser", null)
+                    b.HasOne("Hackathon.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -401,11 +407,18 @@ namespace Hackathon.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Hackathon.Data.ApplicationUser", null)
+                    b.HasOne("Hackathon.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Hackathon.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("CreatedPosts");
+
+                    b.Navigation("JoinedPosts");
                 });
 
             modelBuilder.Entity("Hackathon.Models.Post", b =>

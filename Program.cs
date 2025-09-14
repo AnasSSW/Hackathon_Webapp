@@ -1,6 +1,7 @@
 using Hackathon.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Hackathon.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

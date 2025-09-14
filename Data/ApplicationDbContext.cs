@@ -11,6 +11,7 @@ namespace Hackathon.Data
             : base(options)
         {
         }
+
         public DbSet<Hackathon.Models.Post> Posts { get; set; }
         public DbSet<Hackathon.Models.PostParticipant> PostParticipants { get; set; }
 
@@ -18,27 +19,36 @@ namespace Hackathon.Data
         {
             base.OnModelCreating(builder);
 
-            // Configure composite primary key for PostParticipant
-            builder.Entity<PostParticipant>()
-                .HasKey(pp => new { pp.PostId, pp.UserId });
-
-            // Configure the many-to-many relationship
+            // Configure the many-to-many relationship via a join entity (PostParticipant)
+            // The Id property in PostParticipant will be the primary key.
             builder.Entity<PostParticipant>()
                 .HasOne(pp => pp.Post)
                 .WithMany(p => p.Participants)
-                .HasForeignKey(pp => pp.PostId);
+                .HasForeignKey(pp => pp.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<PostParticipant>()
                 .HasOne(pp => pp.User)
-                .WithMany()
-                .HasForeignKey(pp => pp.UserId);
+                .WithMany(u => u.JoinedPosts)
+                .HasForeignKey(pp => pp.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // Configure the relationship between Post and ApplicationUser, preventing cascade delete
+            // Configure the relationship between Post and ApplicationUser (Author)
             builder.Entity<Post>()
                 .HasOne(p => p.Author)
-                .WithMany()
+                .WithMany(u => u.CreatedPosts)
                 .HasForeignKey(p => p.AuthorId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Fix for ASP.NET Identity table names to remove "AspNet" prefix
+            foreach (var entity in builder.Model.GetEntityTypes())
+            {
+                var currentTableName = builder.Entity(entity.Name).Metadata.GetDefaultTableName();
+                if (currentTableName != null && currentTableName.Contains("AspNet"))
+                {
+                    builder.Entity(entity.Name).ToTable(currentTableName.Replace("AspNet", ""));
+                }
+            }
         }
     }
 }

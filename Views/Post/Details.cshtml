@@ -1,144 +1,140 @@
 ﻿@model Hackathon.Models.Post
-@using Microsoft.AspNetCore.Identity
-@using Hackathon.Models
-@using Hackathon.Data
-@inject UserManager<ApplicationUser> UserManager
 
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = @Model.Title;
     ViewData["DisableMainCss"] = true;
-    var currentUserId = UserManager.GetUserId(User);
-    var isPostAuthor = currentUserId == Model.AuthorId;
-    var isAlreadyApplied = Model.Participants.Any(p => p.UserId == currentUserId);
-    var isApproved = isAlreadyApplied && Model.Participants.First(p => p.UserId == currentUserId).IsApproved;
-    var postExpired = Model.ExpirationDate.HasValue && Model.ExpirationDate.Value <= DateTime.UtcNow;
-    var isFull = Model.Participants.Count >= Model.MaxParticipants;
+    var isAuthor = ViewBag.IsAuthor as bool? ?? false;
+    var isParticipant = ViewBag.IsParticipant as bool? ?? false;
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/post-details-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/post-style.css" asp-append-version="true" />
 }
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-lg-9">
+        <div class="col-md-9">
             <div class="post-details-card">
                 @if (!string.IsNullOrEmpty(Model.ImageUrl))
                 {
                     <div class="post-image-header">
-                        <img src="@Model.ImageUrl" alt="@Model.Title">
+                        <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid" onerror="this.onerror=null;this.src='https://via.placeholder.com/900x400?text=No+Image';">
                     </div>
                 }
+
                 <div class="post-body">
                     <div class="post-meta">
                         <div class="author-info">
-                            <img src="@(Model.Author?.ProfilePictureUrl ?? "https://via.placeholder.com/40")" alt="Author Avatar">
+                            <img src="https://ui-avatars.com/api/?name=@(Model.Author?.FirstName)+@(Model.Author?.LastName)&background=random&color=fff&rounded=true" alt="Avatar">
                             <div class="author-details">
-                                <p class="author-name">@Model.Author?.FirstName @Model.Author?.LastName</p>
-                                <p class="post-date">Posted on @Model.CreatedAt.ToShortDateString()</p>
+                                <p class="author-name">โดย: @Model.Author?.FirstName @Model.Author?.LastName</p>
+                                <p class="post-date">โพสต์เมื่อ: @Model.CreatedAt.ToString("dd MMMM yyyy")</p>
                             </div>
                         </div>
-                        <div class="meta-right">
-                            @if (Model.ExpirationDate.HasValue && Model.ExpirationDate.Value > DateTime.UtcNow)
+
+                        <!-- แสดงสถานะโพสต์ (เปิด/ปิดรับสมัคร) -->
+                        <div class="post-status">
+                            @if (Model.IsClosed)
                             {
-                                var timeRemaining = Model.ExpirationDate.Value - DateTime.UtcNow;
-                                <div class="time-remaining">
-                                    <i class="far fa-clock"></i> @((int)timeRemaining.TotalDays) days remaining
-                                </div>
+                                <span class="badge bg-danger">ปิดรับสมัคร</span>
                             }
-                            <div class="participants-count">
-                                <i class="fas fa-users"></i> @Model.Participants.Count / @Model.MaxParticipants
-                            </div>
+                            else
+                            {
+                                <span class="badge bg-success">เปิดรับสมัคร</span>
+                            }
                         </div>
                     </div>
 
                     <h1 class="post-title">@Model.Title</h1>
+
                     <div class="post-content">
-                        @Html.Raw(Model.Content.Replace("\n", "<br />"))
+                        <p>@Html.Raw(Model.Content.Replace("\n", "<br/>"))</p>
                     </div>
+
+                    <hr />
 
                     <div class="post-footer">
                         <div class="expertise-tags">
-                            @if (!string.IsNullOrEmpty(Model.RequiredExpertise))
+                            @foreach (var expertise in Model.RequiredExpertise.Split(','))
                             {
-                                foreach (var skill in Model.RequiredExpertise.Split(','))
-                                {
-                                    <span class="tag">@skill.Trim()</span>
-                                }
+                                <span class="tag">@expertise.Trim()</span>
                             }
                         </div>
-                        <div class="post-buttons">
-                            @if (isPostAuthor)
+                        <div class="d-flex align-items-center gap-2">
+                            @if (isAuthor)
                             {
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                        ...
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@Model.Id">แก้ไขโพสต์</a></li>
-                                    </ul>
-                                </div>
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">แก้ไขโพสต์</a>
                             }
-                            else if (!Model.IsClosed && !postExpired && !isFull)
+                            else if (isParticipant)
                             {
-                                @if (isApproved)
-                                {
-                                    <button class="btn btn-success" disabled>เข้าร่วมแล้ว</button>
-                                }
-                                else if (isAlreadyApplied)
-                                {
-                                    <button class="btn btn-warning" disabled>รอการอนุมัติ</button>
-                                }
-                                else
-                                {
-                                    <form asp-action="Join" method="post" class="d-inline">
-                                        <input type="hidden" name="id" value="@Model.Id" />
-                                        <button type="submit" class="btn btn-primary">เข้าร่วม</button>
-                                    </form>
-                                }
+                                <span class="badge bg-secondary">คุณเข้าร่วมแล้ว</span>
                             }
                             else
                             {
-                                <button class="btn btn-danger" disabled>โพสต์นี้ปิดแล้ว</button>
+                                <form asp-action="Join" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-primary">เข้าร่วม</button>
+                                </form>
                             }
                         </div>
                     </div>
-
-                    @if (isPostAuthor && Model.Participants.Any())
-                    {
-                        <div class="participants-section mt-5">
-                            <h4 class="mb-3">ผู้เข้าร่วมที่สมัคร (@Model.Participants.Count)</h4>
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ชื่อผู้ใช้</th>
-                                        <th>สถานะ</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var participant in Model.Participants.Where(p => !p.IsApproved))
-                                    {
-                                        <tr>
-                                            <td>@participant.User.FirstName @participant.User.LastName</td>
-                                            <td>
-                                                <span class="badge bg-warning">รอการอนุมัติ</span>
-                                            </td>
-                                            <td>
-                                                <form asp-action="ApproveParticipant" method="post">
-                                                    <input type="hidden" name="id" value="@participant.Id" />
-                                                    <button type="submit" class="btn btn-success btn-sm">อนุมัติ</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ส่วนจัดการผู้เข้าร่วม (แสดงเฉพาะเจ้าของโพสต์) -->
+@if (isAuthor)
+{
+    <div class="container mt-4 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h3 class="mb-0">ผู้เข้าร่วม (Participants) (@Model.Participants.Count)</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">ชื่อผู้ใช้</th>
+                                <th scope="col">ID ผู้เข้าร่วม</th>
+                                <th scope="col">สถานะ</th>
+                                <th scope="col">ดำเนินการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var participant in Model.Participants)
+                            {
+                                <tr>
+                                    <td>@participant.User.FirstName @participant.User.LastName</td>
+                                    <td>@participant.Id</td>
+                                    <td>
+                                        @if (participant.IsApproved)
+                                        {
+                                            <span class="badge bg-success">อนุมัติแล้ว</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">รออนุมัติ</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!participant.IsApproved)
+                                        {
+                                            <form asp-action="ApproveParticipant" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@participant.Id" />
+                                                <button type="submit" class="btn btn-sm btn-success">อนุมัติ</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}

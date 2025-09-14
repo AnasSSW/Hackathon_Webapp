@@ -4,9 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Hackathon.Controllers
 {
+    // กำหนดให้ทุกเมธอดใน Controller นี้ต้องมีการล็อกอิน ยกเว้นที่ระบุ [AllowAnonymous]
     [Authorize]
     public class PostController : Controller
     {
@@ -19,6 +22,7 @@ namespace Hackathon.Controllers
             _userManager = userManager;
         }
 
+        // อนุญาตให้เข้าถึงหน้า Index ได้โดยไม่ต้องล็อกอิน
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
@@ -26,6 +30,7 @@ namespace Hackathon.Controllers
             return View(posts);
         }
 
+        // อนุญาตให้เข้าถึงหน้ารายละเอียดโพสต์ได้โดยไม่ต้องล็อกอิน
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
@@ -44,6 +49,18 @@ namespace Hackathon.Controllers
             {
                 return NotFound();
             }
+
+            // ตรวจสอบสถานะผู้ใช้เพื่อส่งข้อมูลไปยัง View
+            string userId = null;
+            if (User.Identity.IsAuthenticated)
+            {
+                userId = _userManager.GetUserId(User);
+            }
+            var isAuthor = post.AuthorId == userId;
+            var isParticipant = post.Participants.Any(pp => pp.UserId == userId);
+
+            ViewBag.IsAuthor = isAuthor;
+            ViewBag.IsParticipant = isParticipant;
 
             return View(post);
         }
@@ -147,10 +164,11 @@ namespace Hackathon.Controllers
         public async Task<IActionResult> Join(int id)
         {
             var userId = _userManager.GetUserId(User);
+            var post = await _context.Posts.FindAsync(id);
+
+            // ตรวจสอบว่าผู้ใช้เข้าร่วมแล้วหรือโพสต์เต็มหรือไม่
             var isAlreadyApplied = await _context.PostParticipants
                 .AnyAsync(pp => pp.PostId == id && pp.UserId == userId);
-
-            var post = await _context.Posts.FindAsync(id);
 
             if (isAlreadyApplied || post == null || post.Participants.Count >= post.MaxParticipants)
             {
@@ -167,7 +185,7 @@ namespace Hackathon.Controllers
 
             _context.PostParticipants.Add(postParticipant);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Details", new { id });
         }
 
         [HttpPost]
@@ -178,13 +196,19 @@ namespace Hackathon.Controllers
                 .Include(pp => pp.Post)
                 .FirstOrDefaultAsync(pp => pp.Id == id);
 
+            // ตรวจสอบว่าพบผู้เข้าร่วมและผู้ใช้ปัจจุบันคือเจ้าของโพสต์
             if (postParticipant == null || postParticipant.Post.AuthorId != _userManager.GetUserId(User))
             {
+                // ถ้าไม่ถูกต้อง ให้ส่ง NotFound หรือ Forbid
                 return NotFound();
             }
 
+            // ตั้งค่าสถานะเป็นอนุมัติ
             postParticipant.IsApproved = true;
+            _context.Update(postParticipant);
             await _context.SaveChangesAsync();
+
+            // เปลี่ยนเส้นทางกลับไปยังหน้ารายละเอียดของโพสต์
             return RedirectToAction("Details", new { id = postParticipant.PostId });
         }
         private bool PostExists(int id)

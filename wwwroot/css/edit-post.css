@@ -1,0 +1,171 @@
+﻿/* ------------------------------------------------------------------------- */
+/* Combined CSS for the entire Edit Post page                                */
+/* ------------------------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap');
+
+/* Main style for the body of the edit post page */
+body {
+    background-color: #f0f2f5;
+    font-family: 'Prompt', sans-serif;
+}
+
+/* Main container and card */
+.container.mt-5 {
+    margin-top: 5rem !important;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 12px 12px 0 0;
+    padding: 20px;
+}
+
+    .card-header h2 {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+.card-body {
+    padding: 30px;
+}
+
+/* Form and form elements */
+.form-group {
+    margin-bottom: 24px; /* Add spacing between form groups */
+}
+
+.form-label {
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 8px; /* Add spacing between label and input */
+    display: block; /* Make label a block element */
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+    width: 100%; /* Make input full width */
+    box-sizing: border-box; /* Include padding and border in the width */
+}
+
+    .form-control:focus {
+        border-color: #28b2eb;
+        box-shadow: 0 0 0 0.25rem rgba(40, 178, 235, 0.25);
+    }
+
+textarea.form-control {
+    resize: vertical;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #28b2eb, #1a91c4);
+    color: white;
+}
+
+    .btn-primary:hover {
+        box-shadow: 0 4px 15px rgba(40, 178, 235, 0.4);
+        transform: translateY(-2px);
+    }
+
+.btn-outline-secondary {
+    border: 1px solid #95a5a6;
+    color: #7f8c8d;
+    background-color: transparent;
+}
+
+    .btn-outline-secondary:hover {
+        background-color: #ecf0f1;
+        color: #2c3e50;
+    }
+
+/* Alert messages */
+.text-danger {
+    font-size: 0.875rem;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Toggle Switch Styles (from selected code)                                 */
+/* ------------------------------------------------------------------------- */
+
+/* The switch - the box around the slider */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+    /* Hide default HTML checkbox */
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+input:checked + .slider {
+    background-color: #28b2eb;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #28b2eb;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
