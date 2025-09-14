@@ -1,15 +1,31 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using Hackathon.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - Hackathon</title>
-    <link rel="stylesheet" href="~/css/style_index.css" asp-append-version="true" />
 
-    <!-- This section allows individual pages to add their own stylesheets -->
+    <!-- CSS สำหรับแถบนำทางและส่วนหัวของเว็บ จะแสดงผลเสมอ -->
+    <link rel="stylesheet" href="~/css/_navbar.css" asp-append-version="true" />
+
+    <!-- CSS สำหรับเนื้อหาหลักของเว็บ จะไม่แสดงผลถ้ามีการตั้งค่า ViewData["DisableMainCss"] เป็น true -->
+    @if (ViewData["DisableMainCss"] == null || (bool)ViewData["DisableMainCss"] != true)
+    {
+        <link rel="stylesheet" href="~/css/style_index.css" asp-append-version="true" />
+    }
+
     @await RenderSectionAsync("Styles", required: false)
+
 </head>
 <body class="main-layout">
+
+    <!-- ส่วนหัว (Header) ที่แสดงตลอดเวลา -->
     <div class="hero">
         <div class="header">
             <div class="logo">
@@ -19,17 +35,25 @@
             <div class="search-bar">
                 <input type="text" placeholder="ค้นหา...">
             </div>
+
+            <!-- ปุ่มสร้างโพสต์ - แสดงเฉพาะผู้ใช้ที่เข้าสู่ระบบแล้ว -->
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a asp-controller="Post" asp-action="Create" class="create-post-btn">สร้างโพสต์</a>
+            }
+
             <div class="actions">
                 <partial name="_LoginPartial" />
             </div>
         </div>
     </div>
 
-    <!-- The main content from other pages will be rendered here -->
+    <!-- เนื้อหาหลักของหน้าจะถูกแสดงที่นี่ -->
     <main role="main">
         @RenderBody()
     </main>
 
+    <!-- ส่วนท้าย (Footer) ที่แสดงตลอดเวลา -->
     <footer class="footer">
         <div class="footer-content">
             <p>&copy; 2025 Hackathon. | แบ่งปันความรู้และแรงบันดาลใจทุกวัน</p>
@@ -39,8 +63,7 @@
         </div>
     </footer>
 
-    <!-- This section allows individual pages to add their own scripts -->
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
-

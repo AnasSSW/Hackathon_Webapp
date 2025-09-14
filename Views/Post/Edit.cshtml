@@ -1,0 +1,58 @@
+﻿@model Hackathon.Models.Post
+
+@{
+    ViewData["Title"] = "แก้ไขโพสต์";
+    ViewData["DisableMainCss"] = true;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header"><h2 class="mb-0">@ViewData["Title"]</h2></div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="form-label fw-bold"></label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Content" class="form-label fw-bold"></label>
+                            <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="ImageUrl" class="form-label fw-bold"></label>
+                            <input asp-for="ImageUrl" class="form-control" />
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="RequiredExpertise" class="form-label fw-bold"></label>
+                            <input asp-for="RequiredExpertise" class="form-control" />
+                            <span asp-validation-for="RequiredExpertise" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="ExpirationDate" class="form-label fw-bold"></label>
+                            <input asp-for="ExpirationDate" class="form-control" />
+                            <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="MaxParticipants" class="form-label fw-bold"></label>
+                            <input asp-for="MaxParticipants" class="form-control" type="number" />
+                            <span asp-validation-for="MaxParticipants" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <input type="submit" value="บันทึก" class="btn btn-primary" />
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">ยกเลิก</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

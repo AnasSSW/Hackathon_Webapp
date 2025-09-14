@@ -1,0 +1,300 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap');
+
+/* Style หลักสำหรับ body ของหน้าสร้างโพสต์ */
+body {
+    background-color: #f0f2f5;
+    font-family: 'Prompt', sans-serif;
+}
+
+/* Container และ Card หลัก */
+.container.mt-5 {
+    margin-top: 5rem !important;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 12px 12px 0 0;
+    padding: 20px;
+}
+
+    .card-header h2 {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+.card-body {
+    padding: 30px;
+}
+
+/* ฟอร์มและองค์ประกอบในฟอร์ม */
+.form-group {
+    margin-bottom: 24px; /* เพิ่มระยะห่างระหว่างกลุ่มฟอร์ม */
+}
+
+.form-label {
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 8px; /* เพิ่มระยะห่างระหว่าง label และ input */
+    display: block; /* ทำให้ label ขึ้นบรรทัดใหม่ */
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+    width: 100%; /* ทำให้ input กว้างเต็มพื้นที่ */
+    box-sizing: border-box; /* คำนวณ padding และ border รวมในความกว้าง */
+}
+
+    .form-control:focus {
+        border-color: #28b2eb;
+        box-shadow: 0 0 0 0.25rem rgba(40, 178, 235, 0.25);
+    }
+
+textarea.form-control {
+    resize: vertical;
+}
+
+/* select expertise */
+#expertise-select {
+    height: 200px;
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+    #expertise-select option {
+        padding: 8px 10px;
+        border-radius: 4px;
+    }
+
+/* ปุ่ม */
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #28b2eb, #1a91c4);
+    color: white;
+}
+
+    .btn-primary:hover {
+        box-shadow: 0 4px 15px rgba(40, 178, 235, 0.4);
+        transform: translateY(-2px);
+    }
+
+.btn-outline-secondary {
+    border: 1px solid #95a5a6;
+    color: #7f8c8d;
+    background-color: transparent;
+}
+
+    .btn-outline-secondary:hover {
+        background-color: #ecf0f1;
+        color: #2c3e50;
+    }
+
+/* ข้อความแจ้งเตือน */
+.text-danger {
+    font-size: 0.875rem;
+}
+
+.form-text.text-muted {
+    font-size: 0.8rem;
+    color: #7f8c8d !important;
+}
+
+/* ลบโค้ดซ้ำซ้อนและโค้ดที่ไม่จำเป็น */
+.form-group.mb-3 {
+    margin-bottom: 1.5rem;
+}
+
+/* --- Styles for Post Cards and Details Page --- */
+
+.post-card, .post-details-card {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    overflow: hidden;
+    font-family: 'Kanit', sans-serif;
+}
+
+.post-image-header img {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+}
+
+.post-body {
+     padding: 25px;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.author-info {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+}
+
+    .author-info img {
+     width: 40px;
+    height: 40px;
+    border-radius: 50%;
+     object-fit: cover;
+}
+
+.author-details .author-name {
+     font-weight: 600;
+     color: #1e293b;
+    margin: 0;
+}
+
+.author-details .post-date {
+    font-size: 0.85rem;
+     color: #94a3b8;
+}
+
+.post-actions {
+    display: flex;
+   gap: 10px;
+}
+
+.post-title {
+   font-size: 1.75rem;
+     font-weight: 700;
+   color: #1e293b;
+     margin-bottom: 15px;
+}
+
+.post-content {
+    color: #475569;
+     line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.post-footer {
+    display: flex;
+    justify-content: space-between;
+     align-items: center;
+     padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.expertise-tags .tag {
+   display: inline-block;
+   background-color: #eef2ff;
+   color: #4f46e5;
+  padding: 5px 12px;
+   border-radius: 20px;
+    font-size: 0.8rem;
+   font-weight: 500;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.post-buttons .btn {
+    padding: 10px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+   transition: all 0.3s ease;
+}
+
+.post-buttons .btn-primary {
+   background-color: #4f46e5;
+    color: white;
+}
+
+    .post-buttons .btn-primary:hover {
+    background-color: #4338ca;
+  
+}
+
+.post-buttons .btn-outline-secondary {
+    border: 1px solid #d1d5db;
+    color: #4b5563;
+}
+
+    .post-buttons .btn-outline-secondary:hover {
+    background-color: #f3f4f6;
+    
+}
+
+.time-remaining {
+    background-color: #fefce8;
+   color: #ca8a04;
+  padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+   display: inline-flex;
+  align-items: center;
+    gap: 5px;
+}
+
+/* Styles for cards on Home page */
+.home-card {
+     border-radius: 16px;
+   box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+    .home-card:hover {
+   transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+    .home-card img {
+   height: 200px;
+   object-fit: cover;
+}
+
+    .home-card .card-body {
+    padding: 20px;
+   display: flex;
+    flex-direction: column;
+   flex-grow: 1;
+}
+
+    .home-card .card-title {
+   font-weight: 600;
+    color: #1e293b;
+    flex-grow: 1; /* Pushes button to the bottom */
+}
+
+    .home-card .author-name {
+     font-size: 0.9rem;
+     color: #94a3b8;
+     margin-bottom: 15px;
+}
+
+    .home-card .btn-join {
+    background-color: #4f46e5;
+   color: white;
+    text-align: center;
+}

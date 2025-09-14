@@ -1,24 +1,101 @@
-﻿<div class="main-section">
+﻿@model Hackathon.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="main-section">
+
+    <!-- Matched Posts Section -->
+    @if (Model.MatchedPosts.Any())
+    {
+        <h2 class="section-title">โพสต์ที่ตรงกับทักษะของคุณ</h2>
+        <div class="container">
+            @foreach (var post in Model.MatchedPosts)
+            {
+                <div class="card">
+                    <img src="@(post.ImageUrl ?? "https://via.placeholder.com/200x150/CCCCCC/FFFFFF?text=No+Image")" alt="@post.Title">
+                    <h3>@post.Title</h3>
+                    <p class="author-name">โดย: @(post.Author?.FirstName ?? "N/A")</p>
+                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id" class="join-button">Join Team</a>
+                </div>
+            }
+        </div>
+        <hr class="section-divider" />
+    }
+
+    <!-- All Posts Section -->
+    <h2 class="section-title">โพสต์ทั้งหมด</h2>
     <div class="container">
-      <div class="card">
-        <img src="https://southeastasia.hss.de/fileadmin/user_upload/Projects_HSS/South_East_Asia/pictures/events/2021/Thailand/211204-01-Event-Virtual-Hackathon.jpg" alt="product1">
-        <h3>งานที่ 1</h3>
-        <button>Join team</button>
-      </div>
-      <div class="card">
-        <img src="https://www.spu.ac.th/fac/informatics/wp-content/uploads/sites/10/2023/12/SPU-AI-Prompt-Mini-Hackathon-07-1-scaled.jpg" alt="product2">
-        <h3>Product 2</h3>
-        <button>Join team</button>
-      </div>
-      <div class="card">
-        <img src="https://th.bing.com/th/id/R.ae5a6a64b605c1231975af957fc31f70?rik=b%2bucy0JKkjmT1A&riu=http%3a%2f%2fstatic1.squarespace.com%2fstatic%2f5cd8cf71b2cf79a5a237fb49%2f5d145deceba7710001cdc1b4%2f624e8fc0a3318b6caef6a1cd%2f1649315883420%2fThematic%2bInnovation%2b2565.jpeg%3fformat%3d1500w&ehk=DqtAKTnQdJI4%2fxGKFXVyQ3q6Zdy6U6JkfuDLbdHdZ5c%3d&risl=&pid=ImgRaw&r=0" alt="product3">
-        <h3>Product 3</h3>
-        <button>Join team</button>
-      </div>
-      <div class="card">
-        <img src="https://carlifeway.com/wp-content/uploads/2023/05/Welcome-Home-New-Innovation-San-Parang-PTT-Group-Young-Socialpreneur-Hackathon-3.jpg" alt="product4">
-        <h3>Product 4</h3>
-        <button>Join team</button>
-      </div>
+        @if (Model.AllPosts.Any())
+        {
+            @foreach (var post in Model.AllPosts)
+            {
+                <div class="card">
+                    <img src="@(post.ImageUrl ?? "https://via.placeholder.com/200x150/CCCCCC/FFFFFF?text=No+Image")" alt="@post.Title">
+                    <h3>@post.Title</h3>
+                    <p class="author-name">โดย: @(post.Author?.FirstName ?? "N/A")</p>
+                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id" class="join-button">Join Team</a>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="no-posts-message">ยังไม่มีโพสต์ในระบบ ลองสร้างโพสต์ใหม่ดูสิ!</p>
+        }
     </div>
-  </div>
+
+</div>
+
+@section Styles {
+    <style>
+        .main-section {
+            background: white;
+            padding: 30px 50px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #1e293b;
+        }
+
+        .author-name {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        .join-button {
+            padding: 10px 15px;
+            border: none;
+            background: linear-gradient(135deg, #28b2eb, #2575fc);
+            color: white !important;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+            .join-button:hover {
+                background: linear-gradient(135deg, #ffb04c, #ff8c1a);
+                transform: scale(1.05);
+            }
+
+        .section-divider {
+            margin: 40px 0;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .no-posts-message {
+            grid-column: 1 / -1; /* Span across all grid columns */
+            text-align: center;
+            font-size: 1.1rem;
+            color: #94a3b8;
+            padding: 40px;
+        }
+    </style>
+}
+

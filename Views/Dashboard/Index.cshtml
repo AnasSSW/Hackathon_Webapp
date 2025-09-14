@@ -1,0 +1,71 @@
+﻿@model Hackathon.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "แดชบอร์ด";
+    ViewData["DisableMainCss"] = true;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/post-style.css" asp-append-version="true" />
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">แดชบอร์ด</h1>
+
+    <!-- Posts I created -->
+    <div class="mb-5">
+        <h2 class="mb-3">โพสต์ที่ฉันสร้าง</h2>
+        <div class="row">
+            @if (Model.MyPosts.Any())
+            {
+                foreach (var post in Model.MyPosts)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card home-card">
+                            <img src="@(post.ImageUrl ?? "https://via.placeholder.com/400x200?text=No+Image")" class="card-img-top" alt="@post.Title">
+                            <div class="card-body">
+                                <h5 class="card-title">@post.Title</h5>
+                                <p class="author-name">โดย: @post.Author?.FirstName @post.Author?.LastName</p>
+                                <a asp-action="Details" asp-controller="Post" asp-route-id="@post.Id" class="btn btn-primary btn-join">ดูรายละเอียด</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <p class="text-muted text-center">คุณยังไม่ได้สร้างโพสต์ใด ๆ</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Posts I joined -->
+    <div>
+        <h2 class="mb-3">โพสต์ที่ฉันเข้าร่วม</h2>
+        <div class="row">
+            @if (Model.JoinedPosts.Any())
+            {
+                foreach (var post in Model.JoinedPosts)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card home-card">
+                            <img src="@(post.ImageUrl ?? "https://via.placeholder.com/400x200?text=No+Image")" class="card-img-top" alt="@post.Title">
+                            <div class="card-body">
+                                <h5 class="card-title">@post.Title</h5>
+                                <p class="author-name">โดย: @post.Author?.FirstName @post.Author?.LastName</p>
+                                <a asp-action="Details" asp-controller="Post" asp-route-id="@post.Id" class="btn btn-primary btn-join">ดูรายละเอียด</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <p class="text-muted text-center">คุณยังไม่ได้เข้าร่วมโพสต์ใด ๆ</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

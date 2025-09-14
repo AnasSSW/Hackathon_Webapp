@@ -1,0 +1,144 @@
+﻿@model Hackathon.Models.Post
+@using Microsoft.AspNetCore.Identity
+@using Hackathon.Models
+@using Hackathon.Data
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = Model.Title;
+    ViewData["DisableMainCss"] = true;
+    var currentUserId = UserManager.GetUserId(User);
+    var isPostAuthor = currentUserId == Model.AuthorId;
+    var isAlreadyApplied = Model.Participants.Any(p => p.UserId == currentUserId);
+    var isApproved = isAlreadyApplied && Model.Participants.First(p => p.UserId == currentUserId).IsApproved;
+    var postExpired = Model.ExpirationDate.HasValue && Model.ExpirationDate.Value <= DateTime.UtcNow;
+    var isFull = Model.Participants.Count >= Model.MaxParticipants;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/post-details-style.css" asp-append-version="true" />
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="post-details-card">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="post-image-header">
+                        <img src="@Model.ImageUrl" alt="@Model.Title">
+                    </div>
+                }
+                <div class="post-body">
+                    <div class="post-meta">
+                        <div class="author-info">
+                            <img src="@(Model.Author?.ProfilePictureUrl ?? "https://via.placeholder.com/40")" alt="Author Avatar">
+                            <div class="author-details">
+                                <p class="author-name">@Model.Author?.FirstName @Model.Author?.LastName</p>
+                                <p class="post-date">Posted on @Model.CreatedAt.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        <div class="meta-right">
+                            @if (Model.ExpirationDate.HasValue && Model.ExpirationDate.Value > DateTime.UtcNow)
+                            {
+                                var timeRemaining = Model.ExpirationDate.Value - DateTime.UtcNow;
+                                <div class="time-remaining">
+                                    <i class="far fa-clock"></i> @((int)timeRemaining.TotalDays) days remaining
+                                </div>
+                            }
+                            <div class="participants-count">
+                                <i class="fas fa-users"></i> @Model.Participants.Count / @Model.MaxParticipants
+                            </div>
+                        </div>
+                    </div>
+
+                    <h1 class="post-title">@Model.Title</h1>
+                    <div class="post-content">
+                        @Html.Raw(Model.Content.Replace("\n", "<br />"))
+                    </div>
+
+                    <div class="post-footer">
+                        <div class="expertise-tags">
+                            @if (!string.IsNullOrEmpty(Model.RequiredExpertise))
+                            {
+                                foreach (var skill in Model.RequiredExpertise.Split(','))
+                                {
+                                    <span class="tag">@skill.Trim()</span>
+                                }
+                            }
+                        </div>
+                        <div class="post-buttons">
+                            @if (isPostAuthor)
+                            {
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        ...
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@Model.Id">แก้ไขโพสต์</a></li>
+                                    </ul>
+                                </div>
+                            }
+                            else if (!Model.IsClosed && !postExpired && !isFull)
+                            {
+                                @if (isApproved)
+                                {
+                                    <button class="btn btn-success" disabled>เข้าร่วมแล้ว</button>
+                                }
+                                else if (isAlreadyApplied)
+                                {
+                                    <button class="btn btn-warning" disabled>รอการอนุมัติ</button>
+                                }
+                                else
+                                {
+                                    <form asp-action="Join" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-primary">เข้าร่วม</button>
+                                    </form>
+                                }
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger" disabled>โพสต์นี้ปิดแล้ว</button>
+                            }
+                        </div>
+                    </div>
+
+                    @if (isPostAuthor && Model.Participants.Any())
+                    {
+                        <div class="participants-section mt-5">
+                            <h4 class="mb-3">ผู้เข้าร่วมที่สมัคร (@Model.Participants.Count)</h4>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ชื่อผู้ใช้</th>
+                                        <th>สถานะ</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var participant in Model.Participants.Where(p => !p.IsApproved))
+                                    {
+                                        <tr>
+                                            <td>@participant.User.FirstName @participant.User.LastName</td>
+                                            <td>
+                                                <span class="badge bg-warning">รอการอนุมัติ</span>
+                                            </td>
+                                            <td>
+                                                <form asp-action="ApproveParticipant" method="post">
+                                                    <input type="hidden" name="id" value="@participant.Id" />
+                                                    <button type="submit" class="btn btn-success btn-sm">อนุมัติ</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

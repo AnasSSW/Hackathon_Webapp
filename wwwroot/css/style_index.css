@@ -1,328 +1,100 @@
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap');
 
 body {
-  margin: 0;
-  font-family: "Prompt", sans-serif;
-}
-
-/* ---------------- HERO ---------------- */
-.hero {
-  background: url(background.jpg);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  padding-bottom: 50px; /* เว้นระยะให้ header มีที่หายใจ */
-}
-
-/* ---------------- HEADER ---------------- */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background: #ffffff;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border-radius: 10px;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-  max-width: 400px; 
-  margin: 0 20px;   
-}
-
-.search-bar input {
-  flex: 1;
-  background-color: #dad7d7;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 25px;
-  outline: none;
-  font-size: 14px;
-}
-
-.logo {
-  font-size: 22px;
-  font-weight: bold;
-  color: white;
-  letter-spacing: 1px;
-}
-
-.logo img {
-  width: 30px; 
-  height: 30px; 
-  vertical-align: middle; 
-  margin-right: 8px;
-}
-
-.text1 {
-  color: #28b2eb;
-}
-
-.text2 {
-  color: #ffb04c;
-}
-
-.actions button {
-  margin-left: 15px;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: 0.3s;
-  color: white;
-}
-
-.actions button:first-child {
-  background: #28b2eb;
-}
-
-.actions button:last-child {
-  background: #ffb04c;
-}
-
-.actions button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    margin: 0;
+    font-family: "Prompt", sans-serif;
 }
 
 /* ---------------- MAIN SECTION ---------------- */
 .main-section {
-  background: white;
-  padding: 30px 50px;
-  min-height: 100vh; /* ทำให้พื้นหลังขาวยาวเต็มหน้าจอ */
+    background: white;
+    padding: 30px 50px;
+    min-height: 100vh; /* ทำให้พื้นหลังขาวยาวเต็มหน้าจอ */
 }
 
 /* ---------------- PRODUCT GRID ---------------- */
 .container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
 }
 
 .card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  overflow: hidden;
-  text-align: center;
-  padding: 15px;
-  transition: transform 0.2s;
-  display: flex;
-  flex-direction: column;
-  height: 250px;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 10px;
-  border-radius: 15px 15px 0 0;
-}
-
-.card h3 {
-  margin: 10px 0;
-}
-
-.card .price {
-  font-size: 18px;
-  font-weight: bold;
-  color: #28b2eb;
-  margin: 5px 0 15px;
-}
-
-.card button {
-  padding: 10px 15px;
-  border: none;
-  background: linear-gradient(135deg, #28b2eb, #2575fc);
-  color: white;
-  font-weight: bold;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.card button:hover {
-  background: linear-gradient(135deg, #ffb04c, #ff8c1a);
-  transform: scale(1.05);
-}
-
-.footer {
-  background: #cfcfcf;     
-  color: rgb(32, 32, 32);
-  padding: 30px 20px;
-  text-align: center;
-}
-
-.footer a {
-  color: #2d2d2d;          
-  text-decoration: none;
-  margin: 0 10px;
-  transition: 0.3s;
-}
-
-.footer a:hover {
-  color: #ffb04c;         
-}
-
-.footer .footer-links {
-  margin-top: 10px;
-}
-
-.footer p {
-  margin: 0;
-  font-size: 14px;
-}
-
-
-/* CSS สำหรับ user menu */
-.user-menu {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.2s;
     display: flex;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column;
+    height: 250px;
 }
 
-.notification-btn {
-    position: relative;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: background-color 0.3s;
-}
-
-    .notification-btn:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+    .card:hover {
+        transform: translateY(-5px);
     }
 
-.notification-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #ff4757;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 50%;
-    min-width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+        border-radius: 15px 15px 0 0;
+    }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+    .card h3 {
+        margin: 10px 0;
+    }
 
-.user-avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-}
+    .card .price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #28b2eb;
+        margin: 5px 0 15px;
+    }
 
-.user-email {
-    color: white;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.user-actions {
-    display: flex;
-    gap: 10px;
-}
-
-    .user-actions button {
-        padding: 8px 15px;
-        border: 1px solid #fff;
-        background: transparent;
+    .card button {
+        padding: 10px 15px;
+        border: none;
+        background: linear-gradient(135deg, #28b2eb, #2575fc);
         color: white;
-        border-radius: 5px;
+        font-weight: bold;
+        border-radius: 25px;
         cursor: pointer;
-        font-size: 14px;
-        transition: all 0.3s;
+        transition: 0.3s;
     }
 
-        .user-actions button:hover {
-            background: white;
-            color: #333;
+        .card button:hover {
+            background: linear-gradient(135deg, #ffb04c, #ff8c1a);
+            transform: scale(1.05);
         }
 
-.logout-btn {
-    background: #ff4757 !important;
-    border-color: #ff4757 !important;
+/* ---------------- FOOTER ---------------- */
+.footer {
+    background: #cfcfcf;
+    color: rgb(32, 32, 32);
+    padding: 30px 20px;
+    text-align: center;
 }
 
-    .logout-btn:hover {
-        background: #ff3742 !important;
-        color: white !important;
+    .footer a {
+        color: #2d2d2d;
+        text-decoration: none;
+        margin: 0 10px;
+        transition: 0.3s;
     }
 
-@media (max-width: 768px) {
-    .user-menu {
-        flex-direction: column;
-        gap: 10px;
+        .footer a:hover {
+            color: #ffb04c;
+        }
+
+    .footer .footer-links {
+        margin-top: 10px;
     }
 
-    .user-email {
-        display: none;
-    }
-
-    .user-actions {
-        flex-direction: column;
-        gap: 5px;
-    }
-}
-
-/* --- เพิ่มโค้ดส่วนนี้ในไฟล์ login-style.css --- */
-
-.auth-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* ระยะห่างระหว่างปุ่ม */
-}
-
-.auth-button {
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    color: white !important; /* !important เพื่อ override สไตล์เดิม */
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-    font-family: "Prompt", sans-serif;
-    font-size: 14px;
-}
-
-    .auth-button.login, .auth-button.manage {
-        background: linear-gradient(135deg, #28b2eb, #1a91c4);
-    }
-
-    .auth-button.register {
-        background: linear-gradient(135deg, #ffb04c, #e6952e);
-    }
-
-    .auth-button.logout {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-    }
-
-    .auth-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    .footer p {
+        margin: 0;
+        font-size: 14px;
     }

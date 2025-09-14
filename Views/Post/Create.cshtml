@@ -1,0 +1,97 @@
+﻿@model Hackathon.Models.Post
+@{
+    ViewData["Title"] = "สร้างโพสต์ใหม่";
+    ViewData["DisableMainCss"] = true;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/post-style.css" asp-append-version="true" />
+    <style>
+        #expertise-select {
+            height: 200px;
+        }
+    </style>
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h2 class="mb-0">@ViewData["Title"]</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" id="create-post-form">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="form-label fw-bold"></label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Content" class="form-label fw-bold"></label>
+                            <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="ImageUrl" class="form-label fw-bold"></label>
+                            <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+
+                        <!-- NEW FIELD -->
+                        <div class="form-group mb-3">
+                            <label asp-for="ExpirationDate" class="form-label fw-bold"></label>
+                            <input asp-for="ExpirationDate" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="RequiredExpertise" class="form-label fw-bold"></label>
+                            <select id="expertise-select" class="form-control" multiple>
+                                <!-- Options are populated by JavaScript -->
+                            </select>
+                            <small class="form-text text-muted">กด Ctrl (หรือ Cmd บน Mac) ค้างไว้เพื่อเลือกหลายรายการ</small>
+                            <input type="hidden" asp-for="RequiredExpertise" />
+                            <span asp-validation-for="RequiredExpertise" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <input type="submit" value="สร้างโพสต์" class="btn btn-primary" />
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">ยกเลิก</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" /> 
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const allSkills = [ "HTML/CSS", "JavaScript", "TypeScript", "React", "Angular", "Vue.js", "Tailwind CSS", "C#", "ASP.NET Core", "Node.js", "Python", "Java", "SQL Server", "MySQL", "PHP" ];
+            const selectElement = document.getElementById('expertise-select');
+            const hiddenInput = document.getElementById('RequiredExpertise');
+            allSkills.forEach(skill => {
+                const option = document.createElement('option');
+                option.value = skill;
+                option.textContent = skill;
+                selectElement.appendChild(option);
+            });
+            const updateHiddenInput = () => {
+                const selectedOptions = Array.from(selectElement.selectedOptions).map(option => option.value);
+                hiddenInput.value = selectedOptions.join(',');
+            };
+            selectElement.addEventListener('change', updateHiddenInput);
+            const form = document.getElementById('create-post-form');
+            if(form) {
+                form.addEventListener('submit', updateHiddenInput);
+            }
+        });
+    </script>
+}
