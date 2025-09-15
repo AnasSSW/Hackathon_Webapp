@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,7 +44,7 @@ namespace Hackathon.Controllers
             var post = await _context.Posts
                 .Include(p => p.Author)
                 .Include(p => p.Participants)
-                    .ThenInclude(pp => pp.User)
+                .ThenInclude(pp => pp.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (post == null)
@@ -199,13 +201,24 @@ namespace Hackathon.Controllers
             // ตรวจสอบว่าพบผู้เข้าร่วมและผู้ใช้ปัจจุบันคือเจ้าของโพสต์
             if (postParticipant == null || postParticipant.Post.AuthorId != _userManager.GetUserId(User))
             {
-                // ถ้าไม่ถูกต้อง ให้ส่ง NotFound หรือ Forbid
                 return NotFound();
             }
 
             // ตั้งค่าสถานะเป็นอนุมัติ
             postParticipant.IsApproved = true;
             _context.Update(postParticipant);
+            await _context.SaveChangesAsync();
+
+            // สร้าง Notification ใหม่สำหรับผู้ใช้งานที่ได้รับการอนุมัติ
+            var notification = new Notification
+            {
+                UserId = postParticipant.UserId,
+                Message = $"ผู้เขียนโพสต์ '{postParticipant.Post.Title}' ได้อนุมัติคุณเข้าร่วมแล้ว!",
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
+            };
+
+            _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
 
             // เปลี่ยนเส้นทางกลับไปยังหน้ารายละเอียดของโพสต์

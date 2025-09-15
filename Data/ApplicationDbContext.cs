@@ -12,8 +12,10 @@ namespace Hackathon.Data
         {
         }
 
-        public DbSet<Hackathon.Models.Post> Posts { get; set; }
-        public DbSet<Hackathon.Models.PostParticipant> PostParticipants { get; set; }
+        // Add this DbSet for the new Notification model
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<PostParticipant> PostParticipants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

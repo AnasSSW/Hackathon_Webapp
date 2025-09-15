@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json; // Required for JSON operations
 using Hackathon.Models;
-using Hackathon.Models;
 namespace Hackathon.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
