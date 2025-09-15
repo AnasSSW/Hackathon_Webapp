@@ -1,131 +1,202 @@
 ﻿@model Hackathon.Models.Post
 
+@using System.Text.Json
 @{
     ViewData["Title"] = @Model.Title;
     ViewData["DisableMainCss"] = true;
     var isAuthor = ViewBag.IsAuthor as bool? ?? false;
     var isParticipant = ViewBag.IsParticipant as bool? ?? false;
+    var approvedParticipantsCount = Model.Participants.Count(p => p.IsApproved);
+    var totalParticipantsCount = Model.Participants.Count;
+
+    // Deserialize SkillsJson ของ Author
+    List<Skill> authorSkills = new();
+    if (!string.IsNullOrEmpty(Model.Author?.SkillsJson))
+    {
+        try
+        {
+            authorSkills = JsonSerializer.Deserialize<List<Skill>>(Model.Author.SkillsJson) ?? new List<Skill>();
+        }
+        catch
+        {
+            authorSkills = new List<Skill>();
+        }
+    }
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/post-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/new-details.css" asp-append-version="true" />
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-9">
-            <div class="post-details-card">
-                @if (!string.IsNullOrEmpty(Model.ImageUrl))
-                {
-                    <div class="post-image-header">
-                        <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid" onerror="this.onerror=null;this.src='https://via.placeholder.com/900x400?text=No+Image';">
+<div class="post-details-container">
+
+    <!-- Main Post Details Card -->
+    <div class="post-details-card">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="post-image-header">
+                <img src="@Model.ImageUrl"
+                     alt="@Model.Title"
+                     class="img-fluid"
+                     onerror="this.onerror=null;this.src='https://via.placeholder.com/900x450?text=No+Image';">
+            </div>
+        }
+
+        <div class="post-body">
+            <!-- Post Meta -->
+            <div class="post-meta">
+                <div class="author-info">
+                    <img src="https://ui-avatars.com/api/?name=@(Model.Author?.FirstName)+@(Model.Author?.LastName)&background=random&color=fff&rounded=true"
+                         alt="Avatar">
+                    <div class="author-details">
+                        <p class="author-name">@Model.Author?.FirstName @Model.Author?.LastName</p>
+                        <p class="post-date">โพสต์เมื่อ @Model.CreatedAt.ToString("dd MMMM yyyy")</p>
                     </div>
-                }
+                </div>
 
-                <div class="post-body">
-                    <div class="post-meta">
-                        <div class="author-info">
-                            <img src="https://ui-avatars.com/api/?name=@(Model.Author?.FirstName)+@(Model.Author?.LastName)&background=random&color=fff&rounded=true" alt="Avatar">
-                            <div class="author-details">
-                                <p class="author-name">โดย: @Model.Author?.FirstName @Model.Author?.LastName</p>
-                                <p class="post-date">โพสต์เมื่อ: @Model.CreatedAt.ToString("dd MMMM yyyy")</p>
-                            </div>
+                <div class="meta-right">
+                    <!-- Days Remaining -->
+                    @if (Model.ExpirationDate.HasValue)
+                    {
+                        <div class="time-remaining">
+                            <i class="far fa-clock"></i>
+                            <span id="daysRemaining">- วัน</span>
                         </div>
+                    }
 
-                        <!-- แสดงสถานะโพสต์ (เปิด/ปิดรับสมัคร) -->
-                        <div class="post-status">
-                            @if (Model.IsClosed)
-                            {
-                                <span class="badge bg-danger">ปิดรับสมัคร</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-success">เปิดรับสมัคร</span>
-                            }
-                        </div>
-                    </div>
+                    <!-- Participants -->
+                    <span class="participants-count">
+                        👨‍👩‍👧‍👦 @approvedParticipantsCount / @Model.MaxParticipants คนเข้าร่วม
+                    </span>
 
-                    <h1 class="post-title">@Model.Title</h1>
+                    <!-- Post Status -->
+                    <span class="post-status ms-3" id="postStatus">-</span>
+                </div>
+            </div>
 
-                    <div class="post-content">
-                        <p>@Html.Raw(Model.Content.Replace("\n", "<br/>"))</p>
-                    </div>
+            <!-- Post Content -->
+            <h1 class="post-title">@Model.Title</h1>
+            <div class="post-content">
+                @Html.Raw(Model.Content.Replace("\n", "<br/>"))
+            </div>
 
-                    <hr />
+            <!-- Post Footer -->
+            <div class="post-footer">
+                <div class="expertise-tags">
+                    @if (authorSkills.Any())
+                    {
+                        @foreach (var skill in authorSkills)
+                        {
+                            <span class="tag">@skill.Name</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="tag">ไม่ระบุ</span>
+                    }
+                </div>
 
-                    <div class="post-footer">
-                        <div class="expertise-tags">
-                            @foreach (var expertise in Model.RequiredExpertise.Split(','))
-                            {
-                                <span class="tag">@expertise.Trim()</span>
-                            }
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            @if (isAuthor)
-                            {
-                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">แก้ไขโพสต์</a>
-                            }
-                            else if (isParticipant)
-                            {
-                                <span class="badge bg-secondary">คุณเข้าร่วมแล้ว</span>
-                            }
-                            else
-                            {
-                                <form asp-action="Join" asp-route-id="@Model.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-primary">เข้าร่วม</button>
-                                </form>
-                            }
-                        </div>
-                    </div>
+                <div class="post-buttons">
+                    @if (isAuthor)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit">แก้ไขโพสต์</a>
+                    }
+                    else if (isParticipant)
+                    {
+                        <span class="badge bg-secondary">คุณเข้าร่วมแล้ว</span>
+                    }
+                    else
+                    {
+                        <form asp-action="Join" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-primary">เข้าร่วมโพสต์</button>
+                        </form>
+                    }
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- ส่วนจัดการผู้เข้าร่วม (แสดงเฉพาะเจ้าของโพสต์) -->
-@if (isAuthor)
-{
-    <div class="container mt-4 mb-5">
-        <div class="card shadow-sm">
-            <div class="card-header bg-light">
-                <h3 class="mb-0">ผู้เข้าร่วม (Participants) (@Model.Participants.Count)</h3>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
+    <!-- Participants Section -->
+    @if (isAuthor)
+    {
+        <div class="participants-section mt-4">
+            <div class="participants-card">
+                <div class="card-header">ผู้เข้าร่วมโครงการ</div>
+                <div class="card-body">
+                    <table class="participants-table">
                         <thead>
                             <tr>
-                                <th scope="col">ชื่อผู้ใช้</th>
-                                <th scope="col">ID ผู้เข้าร่วม</th>
-                                <th scope="col">สถานะ</th>
-                                <th scope="col">ดำเนินการ</th>
+                                <th>ชื่อ</th>
+                                <th>ความเชี่ยวชาญ</th>
+                                <th>สถานะ</th>
+                                <th>การกระทำ</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var participant in Model.Participants)
                             {
                                 <tr>
-                                    <td>@participant.User.FirstName @participant.User.LastName</td>
-                                    <td>@participant.Id</td>
-                                    <td>
-                                        @if (participant.IsApproved)
+                                    <td data-label="ชื่อ">
+                                        <div class="participant-row-info">
+                                            <div class="participant-avatar">
+                                                <img src="https://ui-avatars.com/api/?name=@(participant.User?.FirstName)+@(participant.User?.LastName)&background=random&color=fff&rounded=true"
+                                                     alt="Avatar">
+                                            </div>
+                                            <div class="participant-name">@participant.User.FirstName @participant.User.LastName</div>
+                                        </div>
+                                    </td>
+                                    <td data-label="ความเชี่ยวชาญ">
+                                        @{
+                                            List<Skill> participantSkills = new();
+                                            if (!string.IsNullOrEmpty(participant.User?.SkillsJson))
+                                            {
+                                                try
+                                                {
+                                                    participantSkills = JsonSerializer.Deserialize<List<Skill>>(participant.User.SkillsJson) ?? new List<Skill>();
+                                                }
+                                                catch { participantSkills = new List<Skill>(); }
+                                            }
+                                        }
+                                        @if (participantSkills.Any())
                                         {
-                                            <span class="badge bg-success">อนุมัติแล้ว</span>
+                                            foreach (var skill in participantSkills)
+                                            {
+                                                <span class="tag">@skill.Name</span>
+                                            }
                                         }
                                         else
                                         {
-                                            <span class="badge bg-warning text-dark">รออนุมัติ</span>
+                                            <span>-</span>
                                         }
                                     </td>
-                                    <td>
+                                    <td data-label="สถานะ">
+                                        @if (participant.IsApproved)
+                                        {
+                                            <span class="participant-status-badge badge-approved">อนุมัติแล้ว</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="participant-status-badge badge-pending">รอการพิจารณา</span>
+                                        }
+                                    </td>
+                                    <td data-label="การกระทำ" class="table-actions">
                                         @if (!participant.IsApproved)
                                         {
-                                            <form asp-action="ApproveParticipant" method="post" class="d-inline">
+                                            <form asp-action="ApproveParticipant" asp-route-id="@participant.Id" method="post" class="d-inline">
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@participant.Id" />
-                                                <button type="submit" class="btn btn-sm btn-success">อนุมัติ</button>
+                                                <button type="submit" class="btn btn-success">อนุมัติ</button>
+                                            </form>
+                                            <form asp-action="RejectParticipant" asp-route-id="@participant.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger">ปฏิเสธ</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="RemoveParticipant" asp-route-id="@participant.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger">ถอนสิทธิ์</button>
                                             </form>
                                         }
                                     </td>
@@ -136,5 +207,40 @@
                 </div>
             </div>
         </div>
-    </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const daysEl = document.getElementById("daysRemaining");
+            const statusEl = document.getElementById("postStatus");
+
+            // ใช้ ISO format ให้ JS อ่านได้ตรง
+            const expirationStr = '@Model.ExpirationDate?.ToString("o")';
+            const expiration = expirationStr ? new Date(expirationStr) : null;
+
+            if (!expiration) {
+                daysEl.innerText = "- วัน";
+                statusEl.innerText = "ปิด";
+                return;
+            }
+
+            function updateDays() {
+                const now = new Date();
+                const diffMs = expiration - now;
+                if (diffMs <= 0) {
+                    daysEl.innerText = "0 วัน";
+                    statusEl.innerText = "ปิด";
+                } else {
+                    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    daysEl.innerText = `${days} วัน`;
+                    statusEl.innerText = "เปิด";
+                }
+            }
+
+            updateDays();
+            setInterval(updateDays, 60 * 1000); // อัปเดตทุก 1 นาที
+        });
+    </script>
 }

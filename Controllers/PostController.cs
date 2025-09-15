@@ -87,49 +87,36 @@ namespace Hackathon.Controllers
             }
             return View(post);
         }
-
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var post = await _context.Posts.FindAsync(id);
             if (post == null)
-            {
                 return NotFound();
-            }
 
             var currentUserId = _userManager.GetUserId(User);
             if (post.AuthorId != currentUserId)
-            {
                 return Forbid();
-            }
 
             return View(post);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,ImageUrl,RequiredExpertise,ExpirationDate,MaxParticipants")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,ImageUrl,RequiredExpertise,ExpirationDate,MaxParticipants,IsClosed")] Post post)
         {
             if (id != post.Id)
-            {
                 return NotFound();
-            }
 
             var postToUpdate = await _context.Posts.FindAsync(id);
             if (postToUpdate == null)
-            {
                 return NotFound();
-            }
 
             var currentUserId = _userManager.GetUserId(User);
             if (postToUpdate.AuthorId != currentUserId)
-            {
                 return Forbid();
-            }
 
             if (ModelState.IsValid)
             {
@@ -141,25 +128,25 @@ namespace Hackathon.Controllers
                     postToUpdate.RequiredExpertise = post.RequiredExpertise;
                     postToUpdate.ExpirationDate = post.ExpirationDate;
                     postToUpdate.MaxParticipants = post.MaxParticipants;
+                    postToUpdate.IsClosed = post.IsClosed; // รับค่า toggle / hidden input
 
                     _context.Update(postToUpdate);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PostExists(post.Id))
-                    {
+                    if (!_context.Posts.Any(e => e.Id == post.Id))
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
+
                 return RedirectToAction("Details", new { id = postToUpdate.Id });
             }
+
             return View(post);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -224,9 +211,73 @@ namespace Hackathon.Controllers
             // เปลี่ยนเส้นทางกลับไปยังหน้ารายละเอียดของโพสต์
             return RedirectToAction("Details", new { id = postParticipant.PostId });
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveParticipant(int id)
+        {
+            var postParticipant = await _context.PostParticipants
+                .Include(pp => pp.Post)
+                .FirstOrDefaultAsync(pp => pp.Id == id);
+
+            if (postParticipant == null || postParticipant.Post.AuthorId != _userManager.GetUserId(User))
+            {
+                return NotFound();
+            }
+
+            _context.PostParticipants.Remove(postParticipant);
+            await _context.SaveChangesAsync();
+
+            var notification = new Notification
+            {
+                UserId = postParticipant.UserId,
+                Message = $"ผู้เขียนโพสต์ '{postParticipant.Post.Title}' ได้ถอดคุณออกจากโพสต์แล้ว",
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
+            };
+
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = postParticipant.PostId });
+        }
+
         private bool PostExists(int id)
         {
             return _context.Posts.Any(e => e.Id == id);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectParticipant(int id)
+        {
+            var postParticipant = await _context.PostParticipants
+                .Include(pp => pp.Post)
+                .FirstOrDefaultAsync(pp => pp.Id == id);
+
+            if (postParticipant == null || postParticipant.Post.AuthorId != _userManager.GetUserId(User))
+            {
+                return NotFound();
+            }
+
+            // reject = set IsApproved = false (ถ้าเคยอนุมัติแล้วให้กลับเป็น false)
+            postParticipant.IsApproved = false;
+            _context.Update(postParticipant);
+            await _context.SaveChangesAsync();
+
+            var notification = new Notification
+            {
+                UserId = postParticipant.UserId,
+                Message = $"คุณถูกปฏิเสธการเข้าร่วมโพสต์ '{postParticipant.Post.Title}'",
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
+            };
+
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = postParticipant.PostId });
+        }
+
     }
 }

@@ -1,300 +1,293 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap');
+﻿/* -------------------------------------------------------------------------- */
+/* POST DETAILS PAGE                           */
+/* -------------------------------------------------------------------------- */
 
-/* Style หลักสำหรับ body ของหน้าสร้างโพสต์ */
-body {
-    background-color: #f0f2f5;
-    font-family: 'Prompt', sans-serif;
-}
-
-/* Container และ Card หลัก */
-.container.mt-5 {
-    margin-top: 5rem !important;
-}
-
-.card {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-.card-header {
+/* Styles for the main post details card */
+.post-details-card {
     background-color: #ffffff;
-    border-bottom: 1px solid #e0e0e0;
-    border-radius: 12px 12px 0 0;
-    padding: 20px;
-}
-
-    .card-header h2 {
-        color: #2c3e50;
-        font-weight: 600;
-    }
-
-.card-body {
-    padding: 30px;
-}
-
-/* ฟอร์มและองค์ประกอบในฟอร์ม */
-.form-group {
-    margin-bottom: 24px; /* เพิ่มระยะห่างระหว่างกลุ่มฟอร์ม */
-}
-
-.form-label {
-    font-weight: 600;
-    color: #34495e;
-    margin-bottom: 8px; /* เพิ่มระยะห่างระหว่าง label และ input */
-    display: block; /* ทำให้ label ขึ้นบรรทัดใหม่ */
-}
-
-.form-control {
-    border-radius: 8px;
-    border: 1px solid #dcdcdc;
-    padding: 10px 15px;
-    transition: all 0.3s ease;
-    width: 100%; /* ทำให้ input กว้างเต็มพื้นที่ */
-    box-sizing: border-box; /* คำนวณ padding และ border รวมในความกว้าง */
-}
-
-    .form-control:focus {
-        border-color: #28b2eb;
-        box-shadow: 0 0 0 0.25rem rgba(40, 178, 235, 0.25);
-    }
-
-textarea.form-control {
-    resize: vertical;
-}
-
-/* select expertise */
-#expertise-select {
-    height: 200px;
-    border-radius: 8px;
-    border: 1px solid #dcdcdc;
-    padding: 10px;
-    font-size: 1rem;
-}
-
-    #expertise-select option {
-        padding: 8px 10px;
-        border-radius: 4px;
-    }
-
-/* ปุ่ม */
-.btn {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    border: none;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #28b2eb, #1a91c4);
-    color: white;
-}
-
-    .btn-primary:hover {
-        box-shadow: 0 4px 15px rgba(40, 178, 235, 0.4);
-        transform: translateY(-2px);
-    }
-
-.btn-outline-secondary {
-    border: 1px solid #95a5a6;
-    color: #7f8c8d;
-    background-color: transparent;
-}
-
-    .btn-outline-secondary:hover {
-        background-color: #ecf0f1;
-        color: #2c3e50;
-    }
-
-/* ข้อความแจ้งเตือน */
-.text-danger {
-    font-size: 0.875rem;
-}
-
-.form-text.text-muted {
-    font-size: 0.8rem;
-    color: #7f8c8d !important;
-}
-
-/* ลบโค้ดซ้ำซ้อนและโค้ดที่ไม่จำเป็น */
-.form-group.mb-3 {
-    margin-bottom: 1.5rem;
-}
-
-/* --- Styles for Post Cards and Details Page --- */
-
-.post-card, .post-details-card {
-    background-color: #fff;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    font-family: 'Kanit', sans-serif;
+    padding: 30px; /* Adjust padding for better spacing */
+    margin-bottom: 40px;
 }
 
+/* Post image at the top of the card */
 .post-image-header img {
     width: 100%;
     height: auto;
-    max-height: 400px;
+    max-height: 450px;
     object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.post-body {
-     padding: 25px;
-}
-
+/* Section for author and post metadata */
 .post-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 15px; /* Spacing between meta elements */
 }
 
+/* Author info section */
 .author-info {
-   display: flex;
-   align-items: center;
-   gap: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-    .author-info img {
-     width: 40px;
-    height: 40px;
-    border-radius: 50%;
-     object-fit: cover;
-}
+    .author-info img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #e0e0e0;
+    }
 
 .author-details .author-name {
-     font-weight: 600;
-     color: #1e293b;
+    font-weight: 600;
+    color: #1a202c;
     margin: 0;
 }
 
 .author-details .post-date {
-    font-size: 0.85rem;
-     color: #94a3b8;
+    font-size: 0.9rem;
+    color: #718096;
 }
 
-.post-actions {
-    display: flex;
-   gap: 10px;
+/* Post status badge (e.g., open/closed) */
+.post-status .badge {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 600;
 }
 
 .post-title {
-   font-size: 1.75rem;
-     font-weight: 700;
-   color: #1e293b;
-     margin-bottom: 15px;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 20px;
+    line-height: 1.3;
 }
 
 .post-content {
-    color: #475569;
-     line-height: 1.7;
-    margin-bottom: 25px;
+    color: #4a5568;
+    line-height: 1.8;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
 }
 
 .post-footer {
     display: flex;
     justify-content: space-between;
-     align-items: center;
-     padding-top: 20px;
-    border-top: 1px solid #f1f5f9;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 25px;
+    border-top: 1px solid #edf2f7;
+    gap: 20px;
 }
 
-.expertise-tags .tag {
-   display: inline-block;
-   background-color: #eef2ff;
-   color: #4f46e5;
-  padding: 5px 12px;
-   border-radius: 20px;
-    font-size: 0.8rem;
-   font-weight: 500;
-    margin-right: 8px;
-    margin-bottom: 8px;
+/* Section for required expertise tags */
+.expertise-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-.post-buttons .btn {
-    padding: 10px 25px;
+    .expertise-tags .tag {
+        display: inline-block;
+        background-color: #e6f7ff;
+        color: #1890ff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+/* Count for approved participants */
+.participant-count {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+    .participant-count .approved {
+        color: #38a169;
+    }
+
+    .participant-count .total {
+        color: #a0aec0;
+    }
+
+/* Buttons for author and participants */
+.post-actions .btn {
+    padding: 12px 30px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
-   transition: all 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.post-buttons .btn-primary {
-   background-color: #4f46e5;
+.post-actions .btn-primary {
+    background: linear-gradient(135deg, #28b2eb, #1a91c4);
     color: white;
 }
 
-    .post-buttons .btn-primary:hover {
-    background-color: #4338ca;
-  
+    .post-actions .btn-primary:hover {
+        box-shadow: 0 4px 15px rgba(40, 178, 235, 0.4);
+        transform: translateY(-2px);
+    }
+
+/* -------------------------------------------------------------------------- */
+/* PARTICIPANTS TABLE SECTION                       */
+/* -------------------------------------------------------------------------- */
+
+/* Main card for the participants section */
+.participants-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    background-color: #f7fafc;
 }
 
-.post-buttons .btn-outline-secondary {
-    border: 1px solid #d1d5db;
-    color: #4b5563;
+    .participants-card .card-header {
+        background-color: #e2e8f0;
+        border-radius: 12px 12px 0 0;
+        padding: 15px 20px;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+/* Table styles */
+.participants-table {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: separate; /* Required for border-spacing */
+    border-spacing: 0 10px; /* Add space between rows */
 }
 
-    .post-buttons .btn-outline-secondary:hover {
-    background-color: #f3f4f6;
-    
-}
+    .participants-table th {
+        color: #718096;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        padding-bottom: 10px;
+    }
 
-.time-remaining {
-    background-color: #fefce8;
-   color: #ca8a04;
-  padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-   display: inline-flex;
-  align-items: center;
-    gap: 5px;
-}
+    .participants-table td {
+        background-color: #fff;
+        padding: 15px 20px;
+        vertical-align: middle;
+        border-top: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
 
-/* Styles for cards on Home page */
-.home-card {
-     border-radius: 16px;
-   box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .participants-table tr:first-child td {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .participants-table tr:last-child td {
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+.participant-row-info {
     display: flex;
-    flex-direction: column;
-    height: 100%;
+    align-items: center;
+    gap: 15px;
 }
 
-    .home-card:hover {
-   transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+.participant-avatar img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e2e8f0;
 }
 
-    .home-card img {
-   height: 200px;
-   object-fit: cover;
+.participant-name {
+    font-weight: 500;
+    color: #2d3748;
 }
 
-    .home-card .card-body {
-    padding: 20px;
-   display: flex;
-    flex-direction: column;
-   flex-grow: 1;
+/* Status badges in the table */
+.participant-status-badge {
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
 }
 
-    .home-card .card-title {
-   font-weight: 600;
-    color: #1e293b;
-    flex-grow: 1; /* Pushes button to the bottom */
+.badge-approved {
+    background-color: #d1f7e0;
+    color: #1e9a4d;
 }
 
-    .home-card .author-name {
-     font-size: 0.9rem;
-     color: #94a3b8;
-     margin-bottom: 15px;
+.badge-pending {
+    background-color: #fff8e1;
+    color: #e6a200;
 }
 
-    .home-card .btn-join {
-    background-color: #4f46e5;
-   color: white;
-    text-align: center;
+/* Table action buttons */
+.table-actions .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.table-actions .btn-success {
+    background: linear-gradient(135deg, #38a169, #2f855a);
+    color: white;
+}
+
+    .table-actions .btn-success:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(56, 161, 105, 0.3);
+    }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .post-details-card {
+        padding: 20px;
+    }
+
+    .post-title {
+        font-size: 1.8rem;
+    }
+
+    .participants-table, .participants-table thead, .participants-table tbody, .participants-table th, .participants-table td, .participants-table tr {
+        display: block;
+    }
+
+        .participants-table thead {
+            display: none;
+        }
+
+        .participants-table tr {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+
+        .participants-table td {
+            padding: 10px 15px;
+            text-align: right;
+            position: relative;
+        }
+
+            .participants-table td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: 50%;
+                text-align: left;
+                font-weight: 600;
+                color: #555;
+            }
 }

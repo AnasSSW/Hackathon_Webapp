@@ -7,6 +7,63 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/edit-post.css" asp-append-version="true" />
+    <style>
+        /* Toggle Slider CSS */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 26px;
+                width: 26px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: .4s;
+            }
+
+        input:checked + .slider {
+            background-color: #28b2eb;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #28b2eb;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+            .slider.round:before {
+                border-radius: 50%;
+            }
+    </style>
 }
 
 <div class="container mt-5">
@@ -17,56 +74,90 @@
                     <h2 class="mb-0">@ViewData["Title"]</h2>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Edit">
+                    <form asp-action="Edit" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="Id" />
 
+                        <!-- Title -->
                         <div class="form-group mb-3">
                             <label asp-for="Title" class="form-label fw-bold"></label>
                             <input asp-for="Title" class="form-control" />
                             <span asp-validation-for="Title" class="text-danger"></span>
                         </div>
+
+                        <!-- Content -->
                         <div class="form-group mb-3">
                             <label asp-for="Content" class="form-label fw-bold"></label>
                             <textarea asp-for="Content" class="form-control" rows="10"></textarea>
                             <span asp-validation-for="Content" class="text-danger"></span>
                         </div>
+
+                        <!-- ImageUrl -->
                         <div class="form-group mb-3">
                             <label asp-for="ImageUrl" class="form-label fw-bold"></label>
                             <input asp-for="ImageUrl" class="form-control" />
                             <span asp-validation-for="ImageUrl" class="text-danger"></span>
                         </div>
+
+                        <!-- RequiredExpertise -->
                         <div class="form-group mb-3">
                             <label asp-for="RequiredExpertise" class="form-label fw-bold"></label>
                             <input asp-for="RequiredExpertise" class="form-control" />
                             <span asp-validation-for="RequiredExpertise" class="text-danger"></span>
                         </div>
+
+                        <!-- ExpirationDate -->
                         <div class="form-group mb-3">
                             <label asp-for="ExpirationDate" class="form-label fw-bold"></label>
-                            <input asp-for="ExpirationDate" class="form-control" />
+                            <input asp-for="ExpirationDate" class="form-control" type="date" />
                             <span asp-validation-for="ExpirationDate" class="text-danger"></span>
                         </div>
+
+                        <!-- MaxParticipants -->
                         <div class="form-group mb-3">
                             <label asp-for="MaxParticipants" class="form-label fw-bold"></label>
-                            <input asp-for="MaxParticipants" class="form-control" type="number" />
+                            <input asp-for="MaxParticipants" class="form-control" type="number" min="1" />
                             <span asp-validation-for="MaxParticipants" class="text-danger"></span>
                         </div>
 
                         <div class="form-group mb-4 d-flex align-items-center justify-content-between">
-                            <label class="form-label fw-bold mb-0" asp-for="IsClosed">สถานะโพสต์</label>
-                            <label class="toggle-switch">
-                                <input type="checkbox" asp-for="IsClosed">
-                                <span class="slider round"></span>
-                            </label>
+                            <label class="form-label fw-bold mb-0">สถานะโพสต์</label>
+
+                            <div id="fakeToggle" class="toggle-button @((Model.IsClosed ? "closed" : "open"))">
+                                <span class="toggle-text">@((Model.IsClosed ? "ปิด" : "เปิด"))</span>
+                            </div>
+
+                            <input type="hidden" asp-for="IsClosed" id="hiddenIsClosed" />
                         </div>
 
+                        <!-- Submit -->
                         <div class="form-group mt-4">
                             <input type="submit" value="บันทึก" class="btn btn-primary" />
                             <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">ยกเลิก</a>
                         </div>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+                       document.addEventListener("DOMContentLoaded", function() {
+            const toggle = document.getElementById("fakeToggle");
+            const hiddenInput = document.getElementById("hiddenIsClosed");
+
+            toggle.addEventListener("click", function() {
+                const isClosed = hiddenInput.value === "True";
+                hiddenInput.value = isClosed ? "False" : "True";
+
+                toggle.classList.toggle("closed", !isClosed);
+                toggle.classList.toggle("open", isClosed);
+                toggle.querySelector(".toggle-text").textContent = isClosed ? "เปิด" : "ปิด";
+            });
+        });
+    
+    </script>
+}
