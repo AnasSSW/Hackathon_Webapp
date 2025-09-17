@@ -6,17 +6,30 @@
 <div class="main-section">
 
     <!-- Matched Posts Section -->
-    @if (Model.MatchedPosts.Any())
+    @if (Model.MatchedPosts.Any(p => !p.IsClosed))
     {
         <h2 class="section-title">โพสต์ที่ตรงกับทักษะของคุณ</h2>
         <div class="container">
-            @foreach (var post in Model.MatchedPosts)
+            @foreach (var post in Model.MatchedPosts.Where(p => !p.IsClosed))
             {
                 <div class="card">
-                    <img src="@(post.ImageUrl ?? "https://via.placeholder.com/200x150/CCCCCC/FFFFFF?text=No+Image")" alt="@post.Title">
-                    <h3>@post.Title</h3>
+                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id">
+                        <img src="@(post.ImageUrl ?? "https://placehold.co/200x150/CCCCCC/FFFFFF?text=No+Image")" alt="@post.Title">
+                    </a>
+                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id" class="card-title-link">
+                        <h3>@post.Title</h3>
+                    </a>
                     <p class="author-name">โดย: @(post.Author?.FirstName ?? "N/A")</p>
-                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id" class="join-button">Join Team</a>
+                    @if (post.RequiredExpertise != null)
+                    {
+                        <div class="expertise-tags">
+                            @foreach (var tag in post.RequiredExpertise.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()))
+                            {
+                                <span class="badge bg-secondary">@tag</span>
+                            }
+                        </div>
+                    }
+                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id" class="join-button">เข้าร่วมทีม</a>
                 </div>
             }
         </div>
@@ -26,24 +39,36 @@
     <!-- All Posts Section -->
     <h2 class="section-title">โพสต์ทั้งหมด</h2>
     <div class="container">
-        @if (Model.AllPosts.Any())
+        @if (Model.AllPosts.Any(p => !p.IsClosed))
         {
-            @foreach (var post in Model.AllPosts)
+            @foreach (var post in Model.AllPosts.Where(p => !p.IsClosed))
             {
                 <div class="card">
-                    <img src="@(post.ImageUrl ?? "https://via.placeholder.com/200x150/CCCCCC/FFFFFF?text=No+Image")" alt="@post.Title">
-                    <h3>@post.Title</h3>
+                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id">
+                        <img src="@(post.ImageUrl ?? "https://placehold.co/200x150/CCCCCC/FFFFFF?text=No+Image")" alt="@post.Title">
+                    </a>
+                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id" class="card-title-link">
+                        <h3>@post.Title</h3>
+                    </a>
                     <p class="author-name">โดย: @(post.Author?.FirstName ?? "N/A")</p>
-                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id" class="join-button">Join Team</a>
+                    @if (post.RequiredExpertise != null)
+                    {
+                        <div class="expertise-tags">
+                            @foreach (var tag in post.RequiredExpertise.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()))
+                            {
+                                <span class="badge bg-secondary">@tag</span>
+                            }
+                        </div>
+                    }
+                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id" class="join-button">เข้าร่วมทีม</a>
                 </div>
             }
         }
         else
         {
-            <p class="no-posts-message">ยังไม่มีโพสต์ในระบบ ลองสร้างโพสต์ใหม่ดูสิ!</p>
+            <p class="no-posts-message">ยังไม่มีโพสต์ที่เปิดรับสมัครในระบบ ลองสร้างโพสต์ใหม่ดูสิ!</p>
         }
     </div>
-
 </div>
 
 @section Styles {
@@ -90,12 +115,72 @@
         }
 
         .no-posts-message {
-            grid-column: 1 / -1; /* Span across all grid columns */
+            grid-column: 1 / -1;
             text-align: center;
             font-size: 1.1rem;
             color: #94a3b8;
             padding: 40px;
         }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            height: 280px;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+            .card img {
+                width: 100%;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 10px;
+            }
+
+            .card h3 {
+                margin: 10px 0;
+            }
+
+        .card-title-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .expertise-tags {
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .35em .65em;
+            font-size: .75em;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .25rem;
+        }
+
+        .bg-secondary {
+            background-color: #6c757d !important;
+            color: #fff;
+        }
     </style>
 }
-

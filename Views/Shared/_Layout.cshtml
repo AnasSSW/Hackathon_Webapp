@@ -1,198 +1,391 @@
 ﻿@using Microsoft.AspNetCore.Identity
+
 @using Hackathon.Data
+
 @inject SignInManager<ApplicationUser> SignInManager
+
 @inject UserManager<ApplicationUser> UserManager
+
+
 
 <!DOCTYPE html>
 
+
+
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] - Hackathon</title>
 
-    <!-- Font Awesome for the bell icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<meta charset="UTF-8">
 
-    <!-- CSS สำหรับแถบนำทางและส่วนหัวของเว็บ จะแสดงผลเสมอ -->
-    <link rel="stylesheet" href="~/css/_navbar.css" asp-append-version="true" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- CSS สำหรับเนื้อหาหลักของเว็บ จะไม่แสดงผลถ้ามีการตั้งค่า ViewData["DisableMainCss"] เป็น true -->
-    @if (ViewData["DisableMainCss"] == null || (bool)ViewData["DisableMainCss"] != true)
-    {
-        <link rel="stylesheet" href="~/css/style_index.css" asp-append-version="true" />
-    }
+	<title>@ViewData["Title"] - Hackathon</title>
 
-    @await RenderSectionAsync("Styles", required: false)
+
+
+	<!-- Font Awesome for the bell icon -->
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+
+	<!-- CSS สำหรับแถบนำทางและส่วนหัวของเว็บ จะแสดงผลเสมอ -->
+
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+
+
+
+
+	<!-- CSS สำหรับเนื้อหาหลักของเว็บ จะไม่แสดงผลถ้ามีการตั้งค่า ViewData["DisableMainCss"] เป็น true -->
+	@if (ViewData["DisableMainCss"] == null || (bool)ViewData["DisableMainCss"] != true)
+
+	{
+
+		<link rel="stylesheet" href="~/css/style_index.css" asp-append-version="true" />
+
+	}
+
+
+
+	@await RenderSectionAsync("Styles", required: false)
+
+
 
 </head>
+
 <body class="main-layout">
 
-    <!-- ส่วนหัว (Header) ที่แสดงตลอดเวลา -->
-    <div class="hero">
-        <div class="header">
-            <div class="logo">
-                <img src="~/img/logo.png" alt="logo">
-                <a href="/">
-                    <span class="text1">HACKA</span><span class="text2">THON</span>
-                </a>
-            </div>
-            <div class="search-bar">
-                <input type="text" placeholder="ค้นหา...">
-            </div>
 
-            <div class="actions">
-                <!-- Notification Bell -->
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    <button id="notification-bell" class="notification-btn" aria-label="Notifications">
-                        <i class="fas fa-bell"></i>
-                        <span id="notification-count" class="notification-count d-none"></span>
-                    </button>
-                    <a asp-controller="Post" asp-action="Create" class="create-post-btn"><i class="fas fa-plus"></i></a>
-                }
 
-                <!-- Login/Logout Partial View -->
-                <partial name="_LoginPartial" />
-            </div>
-        </div>
-    </div>
+	<!-- ส่วนหัว (Header) ที่แสดงตลอดเวลา -->
 
-    <!-- Modal สำหรับแสดงรายการแจ้งเตือน -->
-    <div id="notification-modal" class="notification-modal">
-        <div class="notification-content">
-            <span class="close-btn">&times;</span>
-            <h4>การแจ้งเตือน</h4>
-            <div id="notification-list">
-                <!-- Notifications will be loaded here by JavaScript -->
-            </div>
-        </div>
-    </div>
+	<div class="hero">
 
-    <!-- เนื้อหาหลักของหน้าจะถูกแสดงที่นี่ -->
-    <main role="main">
-        @RenderBody()
-    </main>
+		<div class="header">
 
-    <!-- ส่วนท้าย (Footer) ที่แสดงตลอดเวลา -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2025 Hackathon. | แบ่งปันความรู้และแรงบันดาลใจทุกวัน</p>
-            <div class="footer-links">
-                <p>ติดตามเรา <a href="#">About</a> | <a href="#">Contact</a> | <a href="#">Privacy Policy</a></p>
-            </div>
-        </div>
-    </footer>
+			<div class="logo">
 
-    @await RenderSectionAsync("Scripts", required: false)
+				<img src="~/img/logo.png" alt="logo">
 
-    <!-- JavaScript สำหรับระบบแจ้งเตือน -->
-    <script>
-        const bell = document.getElementById('notification-bell');
-        const countSpan = document.getElementById('notification-count');
-        const modal = document.getElementById('notification-modal');
-        const closeBtn = document.querySelector('.close-btn');
-        const notifList = document.getElementById('notification-list');
+				<a href="/">
 
-        // Function to fetch unread notification count
-        async function fetchNotificationCount() {
-            try {
-                const response = await fetch(window.location.origin + '/api/notification/unread');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.count > 0) {
-                        countSpan.textContent = data.count;
-                        countSpan.classList.remove('d-none');
-                    } else {
-                        countSpan.classList.add('d-none');
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetching notification count:", error);
-            }
-        }
+					<span class="text1">HACKA</span><span class="text2">THON</span>
 
-        // Function to fetch and display notifications
-        async function fetchNotifications() {
-            try {
-                const response = await fetch(window.location.origin + '/api/notification/list');
+				</a>
 
-                // Check if the response is successful
-                if (!response.ok) {
-                    console.error("Error fetching notifications. Status:", response.status, response.statusText);
-                    notifList.innerHTML = '<p class="text-muted">ไม่สามารถดึงการแจ้งเตือนได้</p>';
-                    return;
-                }
+			</div>
 
-                const notifications = await response.json();
-                console.log("Fetched notifications:", notifications); // Debugging: Log the fetched data
+			<div class="search-bar">
 
-                notifList.innerHTML = ''; // Clear previous notifications
-                if (notifications.length > 0) {
-                    notifications.forEach(notif => {
-                        const notifItem = document.createElement('div');
-                        notifItem.className = 'notification-item';
-                        if (!notif.isRead) {
-                            notifItem.classList.add('unread');
-                        }
-                        notifItem.innerHTML = `<p>${notif.message}</p><span class="date">${new Date(notif.createdAt).toLocaleString()}</span>`;
-                        notifList.appendChild(notifItem);
-                    });
-                    // After fetching and displaying, mark them as read
-                    markAllAsRead();
-                } else {
-                    notifList.innerHTML = '<p class="text-muted">ไม่มีการแจ้งเตือนใหม่</p>';
-                }
-            } catch (error) {
-                console.error("Error fetching notifications:", error);
-                notifList.innerHTML = '<p class="text-muted">เกิดข้อผิดพลาดในการแสดงการแจ้งเตือน</p>';
-            }
-        }
+				<input type="text" placeholder="ค้นหา..." hidden>
 
-        // Function to mark all notifications as read
-        async function markAllAsRead() {
-            // Check if the user is signed in before making the call
-            const isSignedIn = @(SignInManager.IsSignedIn(User).ToString().ToLower());
-            if (!isSignedIn) {
-                console.log("Cannot mark notifications as read. User is not signed in.");
-                return;
-            }
-            try {
-                const response = await fetch(window.location.origin + '/api/notification/mark-as-read', { method: 'POST' });
-                if (response.ok) {
-                    // Update the UI immediately after marking as read
-                    fetchNotificationCount();
-                }
-            } catch (error) {
-                console.error("Error marking notifications as read:", error);
-            }
-        }
+			</div>
 
-        // Event listener for the bell icon
-        if (bell) {
-            bell.addEventListener('click', () => {
-                modal.style.display = 'block';
-                fetchNotifications();
-            });
-        }
 
-        // Close modal
-        closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
 
-        window.addEventListener('click', (event) => {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        });
+			<div class="actions">
 
-        // Fetch notifications every 15 seconds
-        if (bell) {
-            setInterval(fetchNotificationCount, 15000);
-            fetchNotificationCount(); // Initial fetch on page load
-        }
-    </script>
+				<!-- Login/Logout Partial View -->
+
+				<partial name="_LoginPartial" />
+
+
+
+				<!-- Notification Bell and Create Post Button -->
+				@if (SignInManager.IsSignedIn(User))
+
+				{
+
+					<a asp-controller="Dashboard" asp-action="Index" class="create-post-btn dashboard-btn" title="แดชบอร์ด">
+
+						<i class="fas fa-user-circle"></i>
+
+					</a>
+
+					<button id="notification-bell" class="notification-btn" aria-label="Notifications">
+
+						<i class="fas fa-bell"></i>
+
+						<span id="notification-count" class="notification-count d-none"></span>
+
+					</button>
+
+					<a asp-controller="Post" asp-action="Create" class="create-post-btn" title="สร้างโพสต์ใหม่">
+
+						<i class="fas fa-plus"></i>
+
+					</a>
+
+				}
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+
+	<!-- Modal สำหรับแสดงรายการแจ้งเตือน -->
+
+	<div id="notification-modal" class="notification-modal">
+
+		<div class="notification-content">
+
+			<span class="close-btn">&times;</span>
+
+			<h4>การแจ้งเตือน</h4>
+
+			<div id="notification-list">
+
+				<!-- Notifications will be loaded here by JavaScript -->
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+
+	<!-- เนื้อหาหลักของหน้าจะถูกแสดงที่นี่ -->
+
+	<main role="main">
+
+		@RenderBody()
+
+	</main>
+
+
+
+	<!-- ส่วนท้าย (Footer) ที่แสดงตลอดเวลา -->
+
+	<partial name="_FooterPartial" />
+
+
+
+	@await RenderSectionAsync("Scripts", required: false)
+
+
+
+	<!-- JavaScript สำหรับระบบแจ้งเตือน -->
+
+	<script>
+
+		const bell = document.getElementById('notification-bell');
+
+		const countSpan = document.getElementById('notification-count');
+
+		const modal = document.getElementById('notification-modal');
+
+		const closeBtn = document.querySelector('.close-btn');
+
+		const notifList = document.getElementById('notification-list');
+
+
+
+		// Function to fetch unread notification count
+
+		async function fetchNotificationCount() {
+
+			try {
+
+				const response = await fetch(window.location.origin + '/api/notification/unread');
+
+				if (response.ok) {
+
+					const data = await response.json();
+
+					if (data.count > 0) {
+
+						countSpan.textContent = data.count;
+
+						countSpan.classList.remove('d-none');
+
+					} else {
+
+						countSpan.classList.add('d-none');
+
+					}
+
+				}
+
+			} catch (error) {
+
+				console.error("Error fetching notification count:", error);
+
+			}
+
+		}
+
+
+
+		// Function to fetch and display notifications
+
+		async function fetchNotifications() {
+
+			try {
+
+				const response = await fetch(window.location.origin + '/api/notification/list');
+
+
+
+				// Check if the response is successful
+
+				if (!response.ok) {
+
+					console.error("Error fetching notifications. Status:", response.status, response.statusText);
+
+					notifList.innerHTML = '<p class="text-muted">ไม่สามารถดึงการแจ้งเตือนได้</p>';
+
+					return;
+
+				}
+
+
+
+				const notifications = await response.json();
+
+				console.log("Fetched notifications:", notifications); // Debugging: Log the fetched data
+
+
+
+				notifList.innerHTML = ''; // Clear previous notifications
+
+				if (notifications.length > 0) {
+
+					notifications.forEach(notif => {
+
+						const notifItem = document.createElement('div');
+
+						notifItem.className = 'notification-item';
+
+						if (!notif.isRead) {
+
+							notifItem.classList.add('unread');
+
+						}
+
+						notifItem.innerHTML = `<p>${notif.message}</p><span class="date">${new Date(notif.createdAt).toLocaleString()}</span>`;
+
+						notifList.appendChild(notifItem);
+
+					});
+
+					// After fetching and displaying, mark them as read
+
+					markAllAsRead();
+
+				} else {
+
+					notifList.innerHTML = '<p class="text-muted">ไม่มีการแจ้งเตือนใหม่</p>';
+
+				}
+
+			} catch (error) {
+
+				console.error("Error fetching notifications:", error);
+
+				notifList.innerHTML = '<p class="text-muted">เกิดข้อผิดพลาดในการแสดงการแจ้งเตือน</p>';
+
+			}
+
+		}
+
+
+
+		// Function to mark all notifications as read
+
+		async function markAllAsRead() {
+
+			// Check if the user is signed in before making the call
+
+			const isSignedIn = @(SignInManager.IsSignedIn(User).ToString().ToLower());
+
+			if (!isSignedIn) {
+
+				console.log("Cannot mark notifications as read. User is not signed in.");
+
+				return;
+
+			}
+
+			try {
+
+				const response = await fetch(window.location.origin + '/api/notification/mark-as-read', { method: 'POST' });
+
+				if (response.ok) {
+
+					// Update the UI immediately after marking as read
+
+					fetchNotificationCount();
+
+				}
+
+			} catch (error) {
+
+				console.error("Error marking notifications as read:", error);
+
+			}
+
+		}
+
+
+
+		// Event listener for the bell icon
+
+		if (bell) {
+
+			bell.addEventListener('click', () => {
+
+				modal.style.display = 'block';
+
+				fetchNotifications();
+
+			});
+
+		}
+
+
+
+		// Close modal
+
+		closeBtn.addEventListener('click', () => {
+
+			modal.style.display = 'none';
+
+		});
+
+
+
+		window.addEventListener('click', (event) => {
+
+			if (event.target == modal) {
+
+				modal.style.display = 'none';
+
+			}
+
+		});
+
+
+
+		// Fetch notifications every 15 seconds
+
+		if (bell) {
+
+			setInterval(fetchNotificationCount, 15000);
+
+			fetchNotificationCount(); // Initial fetch on page load
+
+		}
+
+	</script>
+
+
 
 </body>
+
 </html>

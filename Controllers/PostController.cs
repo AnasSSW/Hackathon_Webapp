@@ -261,7 +261,7 @@ namespace Hackathon.Controllers
             }
 
             // reject = set IsApproved = false (ถ้าเคยอนุมัติแล้วให้กลับเป็น false)
-            postParticipant.IsApproved = false;
+            postParticipant.IsRejected = true;
             _context.Update(postParticipant);
             await _context.SaveChangesAsync();
 
