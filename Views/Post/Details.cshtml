@@ -1,35 +1,5 @@
-﻿@model Hackathon.Models.Post
-
-@using System.Text.Json
-@{
-    ViewData["Title"] = @Model.Title;
-    ViewData["DisableMainCss"] = true;
-    var isAuthor = ViewBag.IsAuthor as bool? ?? false;
-    var isParticipant = ViewBag.IsParticipant as bool? ?? false;
-    var approvedParticipantsCount = Model.Participants.Count(p => p.IsApproved);
-    // Assuming a new IsRejected property is available on the Participant model
-    var rejectedParticipantsCount = Model.Participants.Count(p => p.IsRejected);
-    var totalParticipantsCount = Model.Participants.Count;
-
-    // Deserialize SkillsJson ของ Author
-    List<Skill> authorSkills = new();
-    if (!string.IsNullOrEmpty(Model.Author?.SkillsJson))
-    {
-        try
-        {
-            authorSkills = JsonSerializer.Deserialize<List<Skill>>(Model.Author.SkillsJson) ?? new List<Skill>();
-        }
-        catch
-        {
-            authorSkills = new List<Skill>();
-        }
-    }
-
-}
-
-@section Styles {
+﻿@section Styles {
     <link rel="stylesheet" href="~/css/new-details.css" asp-append-version="true" />
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .expertise-tags .tag {
             font-size: 0.75rem;
@@ -37,9 +7,9 @@
             padding: 0.4em 0.8em;
             margin-right: 5px;
             margin-bottom: 5px;
-            border-radius: 9999px; /* Tailwind's rounded-full */
-            background-color: #e5e7eb; /* Tailwind's bg-gray-200 */
-            color: #4b5563; /* Tailwind's text-gray-600 */
+            border-radius: 9999px;
+            background-color: #e5e7eb;
+            color: #4b5563;
             display: inline-block;
         }
 
@@ -47,315 +17,95 @@
             font-weight: 600;
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            display: inline-block;
         }
 
-        .badge-pending {
-            background-color: #fcd34d; /* Tailwind's bg-amber-300 */
-            color: #78350f; /* Tailwind's text-amber-900 */
+        /* สถานะ */
+        .status-open {
+            background-color: #34d399; /* เขียว */
+            color: #fff;
         }
 
-        .badge-approved {
-            background-color: #34d399; /* Tailwind's bg-green-400 */
-            color: #064e3b; /* Tailwind's text-green-900 */
+        .status-closed {
+            background-color: #d1d5db; /* เทา */
+            color: #1f2937;
         }
 
-        .badge-rejected {
-            background-color: #f87171; /* Tailwind's bg-red-400 */
-            color: #7f1d1d; /* Tailwind's text-red-900 */
+        .status-expired {
+            background-color: #f87171; /* แดง */
+            color: #fff;
         }
 
         /* Mobile responsiveness for the table */
-        @@media (max-width: 768px) {
-            .participants-table thead {
-                display: none;
-            }
+        @media (max-width: 768px) {
+            .participants-table thead
 
-            .participants-table tr {
-                display: block;
-                margin-bottom: 1rem;
-                border: 1px solid #e5e7eb;
-                border-radius: 0.5rem;
-                padding: 1rem;
-            }
-
-            .participants-table td {
-                display: block;
-                text-align: right;
-                padding-left: 50%;
-                position: relative;
-            }
-
-                .participants-table td::before {
-                    content: attr(data-label);
-                    position: absolute;
-                    left: 1rem;
-                    width: calc(50% - 1.5rem);
-                    text-align: left;
-                    font-weight: 600;
-                }
+        {
+            display: none;
         }
 
+        .participants-table tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .participants-table td {
+            display: block;
+            text-align: right;
+            padding-left: 50%;
+            position: relative;
+        }
+
+            .participants-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 1rem;
+                width: calc(50% - 1.5rem);
+                text-align: left;
+                font-weight: 600;
+            }
+
+        }
     </style>
 }
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const daysEl = document.getElementById("daysRemaining");
+        const timeRemainingContainer = daysEl?.parentNode;
+        const statusEl = document.getElementById("postStatus");
+        const isClosed = @(Model.IsClosed ? "true" : "false");
 
-<div class="post-details-container">
+        function updateStatus() {
+            statusEl.classList.remove("status-open", "status-closed", "status-expired");
 
-    <!-- Main Post Details Card -->
-    <div class="post-details-card">
-        @if (!string.IsNullOrEmpty(Model.ImageUrl))
-        {
-            <div class="post-image-header">
-                <img src="@Model.ImageUrl"
-                     alt="@Model.Title"
-                     class="img-fluid"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/900x450?text=No+Image';">
-            </div>
-        }
-
-        <div class="post-body">
-            <!-- Post Meta -->
-            <div class="post-meta">
-                <div class="author-info">
-                    <img src="https://ui-avatars.com/api/?name=@(Model.Author?.FirstName)+@(Model.Author?.LastName)&background=random&color=fff&rounded=true"
-                         alt="Avatar">
-                    <div class="author-details">
-                        <p class="author-name">@Model.Author?.FirstName @Model.Author?.LastName</p>
-                        <p class="post-date">โพสต์เมื่อ @Model.CreatedAt.ToString("dd MMMM yyyy")</p>
-                    </div>
-                </div>
-
-                <div class="meta-right">
-                    <!-- Days Remaining -->
-                    @if (Model.ExpirationDate.HasValue)
-                    {
-                        <div class="time-remaining">
-                            <i class="far fa-clock"></i>
-                            <span id="daysRemaining">- วัน</span>
-                        </div>
-                    }
-
-                    <!-- Participants -->
-                    <span class="participants-count">
-                        👨‍👩‍👧‍👦 @approvedParticipantsCount / @Model.MaxParticipants คนเข้าร่วม
-                    </span>
-
-                    <!-- Post Status -->
-                    <span class="post-status" id="postStatus">-</span>
-                </div>
-            </div>
-
-            <!-- Post Content -->
-            <h1 class="post-title">@Model.Title</h1>
-            <div class="post-content">
-                @Html.Raw(Model.Content.Replace("\n", "<br/>"))
-            </div>
-
-            <!-- Post Footer -->
-            <div class="post-footer">
-                <div class="expertise-tags">
-                    @if (!string.IsNullOrEmpty(Model.RequiredExpertise))
-                    {
-                        @foreach (var expertise in Model.RequiredExpertise.Split(',', StringSplitOptions.RemoveEmptyEntries))
-                        {
-                            <span class="tag">@expertise.Trim()</span>
-                        }
-                    }
-                    else
-                    {
-                        <span class="tag">ไม่ระบุ</span>
-                    }
-                </div>
-
-                <div class="post-buttons">
-                    @if (isAuthor)
-                    {
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit">แก้ไขโพสต์</a>
-                    }
-                    else if (isParticipant)
-                    {
-                        <span class="badge bg-secondary">คุณสมัครเข้าทีมแล้ว, รอการอนุมัติจากผู้ประกาศ</span>
-                    }
-                    else if (Model.IsClosed || (Model.ExpirationDate.HasValue && Model.ExpirationDate.Value <= DateTime.Now))
-                    {
-                        <button type="button" class="btn btn-secondary" disabled title="โพสต์นี้หมดอายุแล้ว">
-                            หมดอายุ
-                        </button>
-                    }
-                    else
-                    {
-                        <form asp-action="Join" asp-route-id="@Model.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-primary">เข้าร่วมโพสต์</button>
-                        </form>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Participants Section -->
-    @if (isAuthor)
-    {
-        <div class="participants-section mt-4">
-            <div class="participants-card">
-                <div class="card-header">ผู้เข้าร่วมโครงการ</div>
-                <div class="card-body">
-                    <table class="participants-table">
-                        <thead>
-                            <tr>
-                                <th><center>ชื่อ</center></th>
-                                <th><center>ความเชี่ยวชาญ</center></th>
-                                <th><center>สถานะ</center></th>
-                                <th><center>การกระทำ</center></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var participant in Model.Participants)
-                            {
-                                <tr>
-                                    <td data-label="ชื่อ">
-                                        <div class="participant-row-info">
-                                            <div class="participant-avatar">
-                                                <img src="https://ui-avatars.com/api/?name=@(participant.User?.FirstName)+@(participant.User?.LastName)&background=random&color=fff&rounded=true"
-                                                     alt="Avatar">
-                                            </div>
-                                            <div class="participant-name">@participant.User.FirstName @participant.User.LastName</div>
-                                        </div>
-                                    </td>
-                                    <td data-label="ความเชี่ยวชาญ">
-                                        @{
-                                            List<Skill> participantSkills = new();
-                                            if (!string.IsNullOrEmpty(participant.User?.SkillsJson))
-                                            {
-                                                try
-                                                {
-                                                    participantSkills = JsonSerializer.Deserialize<List<Skill>>(participant.User.SkillsJson) ?? new List<Skill>();
-                                                }
-                                                catch { participantSkills = new List<Skill>(); }
-                                            }
-                                        }
-                                        @if (participantSkills.Any())
-                                        {
-                                            foreach (var skill in participantSkills)
-                                            {
-                                                <span class="tag">@skill.Name</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>-</span>
-                                        }
-                                    </td>
-                                    <td data-label="สถานะ">
-                                        <!-- Updated logic to handle three states: Approved, Rejected, and Pending -->
-                                        @if (participant.IsApproved)
-                                        {
-                                            <span class="participant-status-badge badge-approved">อนุมัติแล้ว</span>
-                                        }
-                                        else if (participant.IsRejected) // Check for rejected status
-                                        {
-                                            <span class="participant-status-badge badge-rejected">ปฏิเสธแล้ว</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="participant-status-badge badge-pending">รอการพิจารณา</span>
-                                        }
-                                    </td>
-                                    <td data-label="การกระทำ" class="table-actions">
-                                        <!-- Updated logic for actions -->
-                                        @if (participant.IsApproved)
-                                        {
-                                            <form asp-action="RemoveParticipant" asp-route-id="@participant.Id" method="post" class="d-inline">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-danger">ถอนสิทธิ์</button>
-                                            </form>
-                                        }
-                                        else if (participant.IsRejected)
-                                        {
-                                            <form asp-action="ApproveParticipant" asp-route-id="@participant.Id" method="post" class="d-inline">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-success">อนุมัติ</button>
-                                            </form>
-                                        }
-                                        else
-                                        {
-                                            <form asp-action="ApproveParticipant" asp-route-id="@participant.Id" method="post" class="d-inline">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-success">อนุมัติ</button>
-                                            </form>
-                                            <form asp-action="RejectParticipant" asp-route-id="@participant.Id" method="post" class="d-inline">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-danger">ปฏิเสธ</button>
-                                            </form>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    }
-
-</div>
-
-@section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const daysEl = document.getElementById("daysRemaining");
-            const timeRemainingContainer = daysEl?.parentNode;
-            const statusEl = document.getElementById("postStatus");
-            const isClosed = @(Model.IsClosed ? "true" : "false");
-
-            function updateStatus() {
-                if (isClosed) {
-                    if (daysEl) daysEl.innerText = "- วัน";
-                    if (timeRemainingContainer) {
-                         // Revert to default style
-                         timeRemainingContainer.style.backgroundColor = '#fffbeb';
-                         timeRemainingContainer.style.color = '#d97706';
-                    }
-                    statusEl.innerText = "ปิดใช้งาน";
-                    statusEl.classList.remove('bg-green-500', 'text-white');
-                    statusEl.classList.add('bg-gray-300', 'text-gray-800');
-                    return;
-                }
-
-                // ใช้ ISO format ให้ JS อ่านได้ตรง
-                const expirationStr = '@Model.ExpirationDate?.ToString("o")';
-                const expiration = expirationStr ? new Date(expirationStr) : null;
-                const now = new Date();
-
-                if (!expiration || expiration - now <= 0) {
-                    if (daysEl) daysEl.innerText = "หมดอายุ";
-                    if (timeRemainingContainer) {
-                         // Set to red for expired
-                         timeRemainingContainer.style.backgroundColor = '#fef2f2'; // Tailwind bg-red-50
-                         timeRemainingContainer.style.color = '#dc2626'; // Tailwind text-red-600
-                    }
-                    statusEl.innerText = "ปิดใช้งาน";
-                    statusEl.classList.remove('bg-green-500', 'text-white');
-                    statusEl.classList.add('bg-gray-300', 'text-gray-800');
-                } else {
-                    const diffMs = expiration - now;
-                    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                    if (daysEl) daysEl.innerText = `${days} วัน`;
-                    if (timeRemainingContainer) {
-                         // Revert to default style
-                         timeRemainingContainer.style.backgroundColor = '#fffbeb';
-                         timeRemainingContainer.style.color = '#d97706';
-                    }
-                    statusEl.innerText = "เปิดใช้งาน";
-                    statusEl.classList.remove('bg-gray-300', 'text-gray-800');
-                    statusEl.classList.add('bg-green-500', 'text-white');
-                }
+            if (isClosed) {
+                if (daysEl) daysEl.innerText = "- วัน";
+                statusEl.innerText = "ปิดใช้งาน";
+                statusEl.classList.add("status-closed");
+                return;
             }
 
-            updateStatus();
-            setInterval(updateStatus, 60 * 1000); // อัปเดตทุก 1 นาที
-        });
-    </script>
+            const expirationStr = '@Model.ExpirationDate?.ToString("o")';
+            const expiration = expirationStr ? new Date(expirationStr) : null;
+            const now = new Date();
 
-}
+            if (!expiration || expiration - now <= 0) {
+                if (daysEl) daysEl.innerText = "หมดอายุ";
+                statusEl.innerText = "ปิดใช้งาน";
+                statusEl.classList.add("status-expired");
+            } else {
+                const diffMs = expiration - now;
+                const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                if (daysEl) daysEl.innerText = `${days} วัน`;
+                statusEl.innerText = "เปิดใช้งาน";
+                statusEl.classList.add("status-open");
+            }
+        }
+
+        updateStatus();
+        setInterval(updateStatus, 60 * 1000);
+    });
+</script>
