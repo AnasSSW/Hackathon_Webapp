@@ -8,34 +8,28 @@
     margin: 50px auto;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Post Details Card                                                          */
-/* -------------------------------------------------------------------------- */
+/* Post Details Card */
 .post-details-card {
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     transition: transform 0.3s ease;
-    padding: 0; /* Remove internal padding as content has it */
+    padding: 0;
 }
 
     .post-details-card:hover {
         transform: translateY(-5px);
     }
 
-/* Post Image Header */
 .post-image-header img {
     width: 100%;
     height: auto;
     max-height: 450px;
     object-fit: cover;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
     border-radius: 16px 16px 0 0;
 }
 
-/* Post Body & Content */
 .post-body {
     padding: 40px;
 }
@@ -118,7 +112,6 @@
     font-size: 1.1rem;
 }
 
-/* Post Footer & Actions */
 .post-footer {
     display: flex;
     justify-content: space-between;
@@ -155,7 +148,6 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Primary button for "เข้าร่วมโพสต์" (Join Post) */
 .btn-primary {
     background: linear-gradient(135deg, #28b2eb, #1a91c4);
     color: white;
@@ -166,7 +158,6 @@
         transform: translateY(-2px);
     }
 
-/* New button style for "แก้ไขโพสต์" (Edit Post) */
 .btn-edit {
     background: linear-gradient(135deg, #ffc107, #ff9800);
     color: white;
@@ -177,15 +168,12 @@
         transform: translateY(-2px);
     }
 
-/* -------------------------------------------------------------------------- */
-/* Participants Table Section (Improved)                                      */
-/* -------------------------------------------------------------------------- */
+/* Participants Table */
 .participants-section {
     margin-top: 50px;
 }
 
 .participants-card {
-    border: none;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     background-color: #f7fafc;
@@ -220,7 +208,6 @@
         background-color: #fff;
         padding: 15px 20px;
         vertical-align: middle;
-        border-top: none;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         border-radius: 8px;
     }
@@ -291,28 +278,21 @@
         box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
     }
 
-/* -------------------------------------------------------------------------- */
-/* Responsive styles for mobile                                               */
-/* -------------------------------------------------------------------------- */
+/* Responsive */
 @media (max-width: 768px) {
-    .post-details-card {
-        padding: 0;
-    }
-
     .post-body {
         padding: 20px;
     }
 
     .post-meta {
         flex-direction: column;
-        align-items: flex-start;
         gap: 15px;
     }
 
     .meta-right {
         flex-direction: row;
-        width: 100%;
         justify-content: space-between;
+        width: 100%;
     }
 
     .post-title {
@@ -345,15 +325,15 @@
         margin-bottom: 20px;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
     .participants-table td {
         display: block;
         text-align: right;
-        border-bottom: 1px solid #e2e8f0;
-        position: relative;
         padding-left: 50%;
+        position: relative;
+        border-bottom: 1px solid #e2e8f0;
         border-radius: 0;
     }
 
@@ -378,4 +358,9 @@
         justify-content: flex-end;
         gap: 10px;
     }
+}
+
+.badge-rejected {
+    background-color: #fde2e1;
+    color: #c0392b;
 }

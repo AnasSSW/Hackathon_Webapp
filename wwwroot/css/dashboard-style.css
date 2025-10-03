@@ -1,12 +1,13 @@
 ﻿/* ------------------------------------------------------------------------- */
-/* Dashboard Styles                                                          */
+/* Dashboard Styles (Updated for beautiful cards)                            */
 /* ------------------------------------------------------------------------- */
 
-/* General Body and Main Section */
 body {
     background-color: #f4f7f9;
     font-family: 'Prompt', sans-serif;
     color: #333;
+    margin: 0;
+    padding: 0;
 }
 
 .main-section {
@@ -24,29 +25,40 @@ body {
     padding-bottom: 10px;
 }
 
+/* Cards Grid Layout */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 25px;
+}
+
 /* Card Styles */
 .card.home-card {
     background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     overflow: hidden;
-    height: 100%;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    position: relative;
 }
 
     .card.home-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
     }
 
+/* Card Image */
 .card-img-top {
     width: 100%;
-    height: 200px;
+    height: 180px;
     object-fit: cover;
+    border-bottom: 1px solid #eee;
 }
 
+/* Card Body */
 .card-body {
     padding: 1.5rem;
     display: flex;
@@ -54,58 +66,88 @@ body {
     flex-grow: 1;
 }
 
+/* Card Titles */
 .card-title {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.3rem;
+    font-weight: 700;
     color: #2c3e50;
     margin-bottom: 0.5rem;
+    line-height: 1.4;
 }
 
+/* Author Info */
 .author-name {
     font-size: 0.9rem;
     color: #64748b;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
+    font-style: italic;
 }
 
+/* Expertise Tags */
 .expertise-tags .badge {
     font-size: 0.75rem;
     font-weight: 500;
     padding: 0.4em 0.8em;
-    margin-right: 5px;
-    margin-bottom: 5px;
+    margin: 2px 5px 5px 0;
     border-radius: 20px;
+    display: inline-block;
+    background-color: #e2e8f0;
+    color: #334155;
+    transition: all 0.2s ease;
 }
+
+    .expertise-tags .badge:hover {
+        background-color: #cbd5e1;
+        transform: scale(1.05);
+    }
 
 /* Buttons */
 .join-button {
-    padding: 10px 15px;
+    padding: 12px 18px;
     border: none;
     background: linear-gradient(135deg, #28b2eb, #2575fc);
     color: white !important;
-    font-weight: bold;
-    border-radius: 25px;
+    font-weight: 600;
+    border-radius: 30px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.3s ease;
     text-decoration: none;
     display: inline-block;
     text-align: center;
-    margin-top: auto; /* Push button to the bottom */
+    margin-top: auto;
+    box-shadow: 0 4px 10px rgba(37, 117, 252, 0.3);
 }
 
     .join-button:hover {
         background: linear-gradient(135deg, #ffb04c, #ff8c1a);
-        transform: scale(1.05);
+        transform: scale(1.08);
+        box-shadow: 0 6px 14px rgba(255, 140, 26, 0.35);
     }
 
-/* Dividers and Messages */
+/* Divider */
 .section-divider {
     margin: 40px 0;
     border-top: 1px solid #e2e8f0;
 }
 
+/* No Posts Message */
 .no-posts-message {
     text-align: center;
     font-size: 1.1rem;
     color: #94a3b8;
     padding: 40px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+h1 {
+    text-align: center;
 }

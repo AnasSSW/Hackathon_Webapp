@@ -6,26 +6,21 @@
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
 }
 
-@* @section Styles {
-    <link rel="stylesheet" href="~/css/style1_login.css" asp-append-version="true" />
-} *@
-
 <div class="login-box">
     <span class="text1">HACKA</span><span class="text2">THON</span>
     <h2>เข้าสู่ระบบ</h2>
 
     <form id="account" method="post">
 
-        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger validation-summary" role="alert"></div>
 
         <label asp-for="Input.Email"></label>
         <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="E-mail" />
-        <span asp-validation-for="Input.Email" class="text-danger"></span>
+        <span asp-validation-for="Input.Email" class="text-danger validation-message"></span>
 
         <label asp-for="Input.Password"></label>
         <input asp-for="Input.Password" class="form-control" autocomplete="current-password" placeholder="Password" />
-        <span asp-validation-for="Input.Password" class="text-danger"></span>
-
+        <span asp-validation-for="Input.Password" class="text-danger validation-message"></span>
 
         <button id="login-submit" type="submit" class="btn btn-primary">Submit</button>
     </form>
@@ -33,5 +28,71 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('account');
+            const validationSummary = form.querySelector('.validation-summary');
+            const validationMessages = form.querySelectorAll('.validation-message');
+
+            // ฟังก์ชันสำหรับล้างข้อความผิดพลาด
+            function clearValidationMessages() {
+                validationMessages.forEach(span => {
+                    span.textContent = '';
+                });
+                if (validationSummary) {
+                    validationSummary.style.display = 'none';
+                    validationSummary.innerHTML = ''; // ล้างข้อความใน summary
+                }
+            }
+
+            form.addEventListener('submit', function (event) {
+                // 1. ป้องกันการ Submit เริ่มต้น
+                event.preventDefault();
+
+                // 2. ล้างข้อความผิดพลาดเก่า
+                clearValidationMessages();
+
+                let formIsValid = true;
+                const formElements = form.querySelectorAll('input[data-val]'); // เลือกเฉพาะ input ที่มีการตรวจสอบความถูกต้อง
+
+                formElements.forEach(input => {
+                    const spanId = input.getAttribute('aria-describedby'); // ใช้ id ที่ Tag Helper สร้างมา
+                    const validationSpan = spanId ? document.getElementById(spanId) : input.nextElementSibling;
+
+                    // ตรวจสอบความถูกต้องด้วย Browser Native API
+                    if (!input.checkValidity()) {
+                        formIsValid = false;
+
+                        // 3. แสดงข้อความผิดพลาด
+                        // ใช้วิธีดึงข้อความจาก data attribute (เช่น data-val-required) ที่ ASP.NET Tag Helper สร้างไว้
+                        let errorMessage = input.validationMessage; // ข้อความผิดพลาดมาตรฐานของเบราว์เซอร์
+
+                        if (input.validity.valueMissing && input.dataset.valRequired) {
+                            errorMessage = input.dataset.valRequired;
+                        } else if (input.validity.typeMismatch && input.dataset.valEmail) {
+                            // ใช้สำหรับ Input.Email โดยเฉพาะ
+                            errorMessage = input.dataset.valEmail;
+                        }
+
+                        // แสดงข้อความใน span
+                        if (validationSpan && validationSpan.classList.contains('validation-message')) {
+                            validationSpan.textContent = errorMessage;
+                        }
+
+                        // แสดงข้อความสรุป (ถ้ามี)
+                        if (validationSummary && validationSummary.style.display === 'none') {
+                             validationSummary.style.display = 'block';
+                             validationSummary.innerHTML = '<p>กรุณาแก้ไขข้อผิดพลาดที่ระบุไว้ด้านล่าง</p>';
+                        }
+
+                    }
+                });
+
+                // 4. ส่งฟอร์มหากถูกต้อง
+                if (formIsValid) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
 }

@@ -1,5 +1,6 @@
 ﻿@page
 @model RegisterModel
+
 @{
     ViewData["Title"] = "Register";
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
@@ -11,36 +12,36 @@
 
     <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
 
-        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger validation-summary" role="alert"></div>
 
         <div class="name-row">
             <div class="form-group">
                 <label asp-for="Input.FirstName"></label>
-                <input asp-for="Input.FirstName" class="form-control" placeholder="First name" />
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                <input asp-for="Input.FirstName" class="form-control form-input" placeholder="First name" />
+                <span asp-validation-for="Input.FirstName" class="text-danger validation-message"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.LastName"></label>
-                <input asp-for="Input.LastName" class="form-control" placeholder="Last name" />
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                <input asp-for="Input.LastName" class="form-control form-input" placeholder="Last name" />
+                <span asp-validation-for="Input.LastName" class="text-danger validation-message"></span>
             </div>
         </div>
 
         <label asp-for="Input.PhoneNumber"></label>
-        <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Telephone" />
-        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+        <input asp-for="Input.PhoneNumber" class="form-control form-input" placeholder="Telephone" />
+        <span asp-validation-for="Input.PhoneNumber" class="text-danger validation-message"></span>
 
         <label asp-for="Input.Email"></label>
-        <input asp-for="Input.Email" class="form-control" placeholder="E-mail" autocomplete="username" />
-        <span asp-validation-for="Input.Email" class="text-danger"></span>
+        <input asp-for="Input.Email" class="form-control form-input" placeholder="E-mail" autocomplete="username" />
+        <span asp-validation-for="Input.Email" class="text-danger validation-message"></span>
 
         <label asp-for="Input.Password"></label>
-        <input asp-for="Input.Password" class="form-control" placeholder="Password" autocomplete="new-password" />
-        <span asp-validation-for="Input.Password" class="text-danger"></span>
+        <input asp-for="Input.Password" class="form-control form-input" placeholder="Password" autocomplete="new-password" />
+        <span asp-validation-for="Input.Password" class="text-danger validation-message"></span>
 
         <label asp-for="Input.ConfirmPassword"></label>
-        <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm-password" autocomplete="new-password" />
-        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        <input asp-for="Input.ConfirmPassword" class="form-control form-input" placeholder="Confirm-password" autocomplete="new-password" />
+        <span asp-validation-for="Input.ConfirmPassword" class="text-danger validation-message"></span>
 
         <button id="registerSubmit" type="submit" class="btn btn-primary">Submit</button>
     </form>
@@ -51,6 +52,88 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('registerForm');
+            const inputs = form.querySelectorAll('.form-input[data-val]');
+            const summary = form.querySelector('.validation-summary');
 
+            // ล้างข้อความผิดพลาดเดิม
+            function clearValidationMessages() {
+                form.querySelectorAll('.validation-message').forEach(span => {
+                    span.textContent = '';
+                });
+                if (summary) {
+                    summary.innerHTML = '';
+                    summary.style.display = 'none';
+                }
+            }
+
+            // ฟังก์ชันหลักในการตรวจสอบความถูกต้อง
+            function validateForm(event) {
+                event.preventDefault();
+                clearValidationMessages();
+
+                let formIsValid = true;
+                let firstInvalidInput = null;
+                const passwordInput = form.querySelector('input[name$="Input.Password"]');
+                const confirmPasswordInput = form.querySelector('input[name$="Input.ConfirmPassword"]');
+
+                inputs.forEach(input => {
+                    // ใช้ checkValidity() ของ HTML5 API ในการตรวจสอบเบื้องต้น
+                    if (!input.checkValidity()) {
+                        formIsValid = false;
+                        if (!firstInvalidInput) firstInvalidInput = input;
+
+                        let errorMessage = input.validationMessage; // ข้อความผิดพลาดเบื้องต้นจากเบราว์เซอร์
+                        const validationSpan = input.nextElementSibling; // โดยทั่วไปคือ <span> ถัดไป
+
+                        // ดึงข้อความผิดพลาดจาก data-attribute (Unobtrusive)
+                        if (input.validity.valueMissing && input.dataset.valRequired) {
+                            errorMessage = input.dataset.valRequired;
+                        } else if (input.validity.typeMismatch && input.dataset.valEmail) {
+                            errorMessage = input.dataset.valEmail;
+                        }
+                        // คุณสามารถเพิ่มการตรวจสอบสำหรับ data-val-length, data-val-regex อื่นๆ ได้ที่นี่
+
+                        if (validationSpan && validationSpan.classList.contains('validation-message')) {
+                            validationSpan.textContent = errorMessage;
+                        }
+                    }
+                });
+
+                // การตรวจสอบพิเศษสำหรับ Confirm Password (ต้องทำเอง)
+                if (passwordInput && confirmPasswordInput) {
+                    if (passwordInput.value !== confirmPasswordInput.value) {
+                        formIsValid = false;
+                        if (!firstInvalidInput) firstInvalidInput = confirmPasswordInput;
+
+                        const confirmValidationSpan = confirmPasswordInput.nextElementSibling;
+                        // ดึงข้อความจาก data-attribute สำหรับ Compare (asp-for ConfirmPassword จะสร้าง data-val-equalto)
+                        let compareError = confirmPasswordInput.dataset.valEqualto;
+
+                        if (confirmValidationSpan && confirmValidationSpan.classList.contains('validation-message')) {
+                            confirmValidationSpan.textContent = compareError || 'Password and confirmation password do not match.';
+                        }
+                    }
+                }
+
+                // แสดงข้อความสรุปด้านบนสุดหากมีข้อผิดพลาด
+                if (!formIsValid) {
+                    if (summary) {
+                        summary.style.display = 'block';
+                        summary.innerHTML = 'กรุณาแก้ไขข้อผิดพลาดที่ระบุไว้ด้านล่างก่อนดำเนินการต่อ';
+                    }
+                    if (firstInvalidInput) {
+                        firstInvalidInput.focus(); // โฟกัสไปที่ Input ที่ผิดพลาดอันแรก
+                    }
+                } else {
+                    // ถ้าฟอร์มถูกต้อง ให้ทำการ Submit
+                    form.submit();
+                }
+            }
+
+            form.addEventListener('submit', validateForm);
+        });
+    </script>
+}

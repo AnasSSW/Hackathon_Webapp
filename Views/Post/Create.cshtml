@@ -5,93 +5,129 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/post-style.css" asp-append-version="true" />
-    <style>
-        tise-select {
-            height: 200px;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/create-post.css" asp-append-version="true" />
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h2 class="mb-0">@ViewData["Title"]</h2>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Create" method="post" id="create-post-form">
-                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
-
-                        <div class="form-group mb-3">
-                            <label asp-for="Title" class="form-label fw-bold"></label>
-                            <input asp-for="Title" class="form-control" />
-                            <span asp-validation-for="Title" class="text-danger"></span>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="Content" class="form-label fw-bold"></label>
-                            <textarea asp-for="Content" class="form-control" rows="10"></textarea>
-                            <span asp-validation-for="Content" class="text-danger"></span>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="ImageUrl" class="form-label fw-bold"></label>
-                            <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
-                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                        </div>
-
-                        <!-- NEW FIELD -->
-                        <div class="form-group mb-3">
-                            <label asp-for="ExpirationDate" class="form-label fw-bold"></label>
-                            <input asp-for="ExpirationDate" class="form-control" type="datetime-local" />
-                            <span asp-validation-for="ExpirationDate" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label asp-for="RequiredExpertise" class="form-label fw-bold"></label>
-                            <select id="expertise-select" class="form-control" multiple>
-                                <!-- Options are populated by JavaScript -->
-                            </select>
-                            <small class="form-text text-muted">กด Ctrl (หรือ Cmd บน Mac) ค้างไว้เพื่อเลือกหลายรายการ</small>
-                            <input type="hidden" asp-for="RequiredExpertise" />
-                            <span asp-validation-for="RequiredExpertise" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group mt-4">
-                            <input type="submit" value="สร้างโพสต์" class="btn btn-primary" />
-                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">ยกเลิก</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>@ViewData["Title"]</h2>
         </div>
+        <form id="create-post-form" method="post" asp-action="Create" asp-controller="Post">
+            <!-- Title -->
+            <div class="form-group">
+                <label for="Title">หัวข้อ</label>
+                <input id="Title" name="Title" />
+                <div class="text-danger" id="error-Title"></div>
+            </div>
+
+            <!-- Content -->
+            <div class="form-group">
+                <label for="Content">เนื้อหา</label>
+                <textarea id="Content" name="Content" rows="8"></textarea>
+                <div class="text-danger" id="error-Content"></div>
+            </div>
+
+            <!-- Image URL -->
+            <div class="form-group">
+                <label for="ImageUrl">รูปภาพ (URL)</label>
+                <input id="ImageUrl" name="ImageUrl" placeholder="https://example.com/image.jpg" />
+                <div class="text-danger" id="error-ImageUrl"></div>
+            </div>
+
+            <!-- Expiration Date -->
+            <div class="form-group">
+                <label for="ExpirationDate">วันหมดอายุ</label>
+                <input id="ExpirationDate" name="ExpirationDate" type="datetime-local" />
+                <div class="text-danger" id="error-ExpirationDate"></div>
+            </div>
+
+            <!-- Required Expertise -->
+            <div class="form-group">
+                <label for="expertise-select">ทักษะที่ต้องการ</label>
+                <select id="expertise-select" multiple></select>
+                <small>กด Ctrl (หรือ Cmd) ค้างไว้เพื่อเลือกหลายรายการ</small>
+                <input type="hidden" id="RequiredExpertise" name="RequiredExpertise" />
+                <div class="text-danger" id="error-RequiredExpertise"></div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">สร้างโพสต์</button>
+                <a href="/" class="btn btn-secondary">ยกเลิก</a>
+            </div>
+        </form>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        <partial name="_ValidationScriptsPartial" /> 
-    }
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const allSkills = [ "HTML/CSS", "JavaScript", "TypeScript", "React", "Angular", "Vue.js", "Tailwind CSS", "C#", "ASP.NET Core", "Node.js", "Python", "Java", "SQL Server", "MySQL", "PHP" ];
+            // กำหนดตัวเลือกทักษะ
+            const allSkills = [
+                "HTML/CSS", "JavaScript", "TypeScript", "React", "Angular",
+                "Vue.js", "Tailwind CSS", "C#", "ASP.NET Core",
+                "Node.js", "Python", "Java", "SQL Server", "MySQL", "PHP"
+            ];
             const selectElement = document.getElementById('expertise-select');
             const hiddenInput = document.getElementById('RequiredExpertise');
+
             allSkills.forEach(skill => {
                 const option = document.createElement('option');
                 option.value = skill;
                 option.textContent = skill;
                 selectElement.appendChild(option);
             });
+
+            // update hidden input ก่อน submit
             const updateHiddenInput = () => {
-                const selectedOptions = Array.from(selectElement.selectedOptions).map(option => option.value);
+                const selectedOptions = Array.from(selectElement.selectedOptions).map(opt => opt.value);
                 hiddenInput.value = selectedOptions.join(',');
             };
+
             selectElement.addEventListener('change', updateHiddenInput);
+
+            // form validation
             const form = document.getElementById('create-post-form');
-            if(form) {
-                form.addEventListener('submit', updateHiddenInput);
-            }
+            form.addEventListener('submit', function (e) {
+                updateHiddenInput(); // อัพเดท hidden input ก่อน submit
+
+                let valid = true;
+
+                // เคลียร์ error เดิม
+                document.querySelectorAll('.text-danger').forEach(el => el.textContent = '');
+
+                // ดึงค่า input
+                const title = document.getElementById('Title').value.trim();
+                const content = document.getElementById('Content').value.trim();
+                const imageUrl = document.getElementById('ImageUrl').value.trim();
+                const expirationDate = document.getElementById('ExpirationDate').value.trim();
+                const expertise = hiddenInput.value.trim();
+
+                // ตรวจสอบค่า
+                if (!title) {
+                    document.getElementById('error-Title').textContent = 'กรุณากรอกหัวข้อ';
+                    valid = false;
+                }
+                if (!content) {
+                    document.getElementById('error-Content').textContent = 'กรุณากรอกเนื้อหา';
+                    valid = false;
+                }
+                if (imageUrl && !/^https?:\/\/.+\..+/.test(imageUrl)) {
+                    document.getElementById('error-ImageUrl').textContent = 'กรุณากรอก URL ถูกต้อง';
+                    valid = false;
+                }
+                if (!expirationDate) {
+                    document.getElementById('error-ExpirationDate').textContent = 'กรุณาเลือกวันหมดอายุ';
+                    valid = false;
+                }
+                if (!expertise) {
+                    document.getElementById('error-RequiredExpertise').textContent = 'กรุณาเลือกทักษะอย่างน้อย 1 รายการ';
+                    valid = false;
+                }
+
+                // ถ้า validation ไม่ผ่าน prevent submit
+                if (!valid) e.preventDefault();
+            });
         });
     </script>
 }
