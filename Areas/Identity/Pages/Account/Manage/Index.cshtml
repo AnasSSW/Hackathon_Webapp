@@ -2,7 +2,6 @@
 @model IndexModel
 @{
     ViewData["Title"] = "โปรไฟล์ของฉัน";
-    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
 }
 
 @section Styles {
@@ -104,14 +103,16 @@
             // IMAGE UPLOAD
             const imageUpload = document.getElementById('imageUpload');
             const profileImg = document.getElementById('profile-img');
-            imageUpload.addEventListener('change', function(e){
-                const file = e.target.files[0];
-                if(file && file.type.startsWith('image/')){
-                    const reader = new FileReader();
-                    reader.onload = ev => profileImg.src = ev.target.result;
-                    reader.readAsDataURL(file);
-                }
-            });
+            if (imageUpload && profileImg) {
+                imageUpload.addEventListener('change', function(e){
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = ev => profileImg.src = ev.target.result;
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
 
             // SKILLS MANAGEMENT
             const skillsListContainer = document.getElementById('skills-list-container');
