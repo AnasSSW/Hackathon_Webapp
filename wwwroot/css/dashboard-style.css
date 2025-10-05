@@ -1,5 +1,5 @@
 ﻿/* ------------------------------------------------------------------------- */
-/* Dashboard Styles (Updated for beautiful cards)                            */
+/* Dashboard Styles - Clean & Simple Design                                  */
 /* ------------------------------------------------------------------------- */
 
 body {
@@ -11,8 +11,16 @@ body {
 }
 
 .main-section {
-    padding: 40px 20px;
-    background-color: #f4f7f9;
+    background: white;
+    padding: 30px 50px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 30px;
 }
 
 /* Section Titles */
@@ -21,108 +29,132 @@ body {
     font-weight: 600;
     margin-bottom: 25px;
     color: #1e293b;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 10px;
 }
 
 /* Cards Grid Layout */
-.cards-grid {
+.cards-grid,
+.container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
 }
 
 /* Card Styles */
+.card,
 .card.home-card {
-    background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.2s;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    position: relative;
+    height: auto;
+    min-height: 320px;
 }
 
-    .card.home-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-    }
+.card:hover,
+.card.home-card:hover {
+    transform: translateY(-5px);
+}
 
 /* Card Image */
+.card img,
 .card-img-top {
     width: 100%;
-    height: 180px;
+    height: 150px;
     object-fit: cover;
-    border-bottom: 1px solid #eee;
+    border-radius: 10px;
 }
 
 /* Card Body */
 .card-body {
-    padding: 1.5rem;
+    padding: 3px 0;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    gap: 2px;
 }
 
 /* Card Titles */
+.card h3,
 .card-title {
-    font-size: 1.3rem;
-    font-weight: 700;
+    margin: 3px 0 2px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
     color: #2c3e50;
-    margin-bottom: 0.5rem;
-    line-height: 1.4;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-title-link {
+    text-decoration: none;
+    color: inherit;
 }
 
 /* Author Info */
 .author-name {
     font-size: 0.9rem;
     color: #64748b;
-    margin-bottom: 0.75rem;
-    font-style: italic;
+    margin-bottom: 3px;
 }
 
 /* Expertise Tags */
-.expertise-tags .badge {
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 0.4em 0.8em;
-    margin: 2px 5px 5px 0;
-    border-radius: 20px;
-    display: inline-block;
-    background-color: #e2e8f0;
-    color: #334155;
-    transition: all 0.2s ease;
+.expertise-tags {
+    margin-top: 3px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
 }
 
-    .expertise-tags .badge:hover {
-        background-color: #cbd5e1;
-        transform: scale(1.05);
-    }
+.expertise-tags .badge,
+.badge {
+    display: inline-block;
+    padding: .35em .65em;
+    font-size: .75em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    margin: 2px;
+}
+
+.bg-secondary {
+    background-color: #6c757d !important;
+    color: #fff;
+}
 
 /* Buttons */
 .join-button {
-    padding: 12px 18px;
+    padding: 10px 15px;
     border: none;
     background: linear-gradient(135deg, #28b2eb, #2575fc);
     color: white !important;
-    font-weight: 600;
-    border-radius: 30px;
+    font-weight: bold;
+    border-radius: 25px;
     cursor: pointer;
-    transition: 0.3s ease;
+    transition: 0.3s;
     text-decoration: none;
     display: inline-block;
-    text-align: center;
     margin-top: auto;
-    box-shadow: 0 4px 10px rgba(37, 117, 252, 0.3);
+    align-self: center;
+    min-width: 120px;
 }
 
-    .join-button:hover {
-        background: linear-gradient(135deg, #ffb04c, #ff8c1a);
-        transform: scale(1.08);
-        box-shadow: 0 6px 14px rgba(255, 140, 26, 0.35);
-    }
+.join-button:hover {
+    background: linear-gradient(135deg, #ffb04c, #ff8c1a);
+    transform: scale(1.05);
+}
 
 /* Divider */
 .section-divider {
@@ -132,22 +164,29 @@ body {
 
 /* No Posts Message */
 .no-posts-message {
+    grid-column: 1 / -1;
     text-align: center;
     font-size: 1.1rem;
     color: #94a3b8;
     padding: 40px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .cards-grid {
+    .main-section {
+        padding: 20px;
+    }
+
+    .cards-grid,
+    .container {
         grid-template-columns: 1fr;
     }
-}
 
-h1 {
-    text-align: center;
+    h1 {
+        font-size: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
 }

@@ -1,4 +1,8 @@
-﻿
+﻿body {
+    margin: 0;
+    padding: 0;
+}
+
 .footer {
     background: #cfcfcf;
     color: rgb(32, 32, 32);
@@ -6,18 +10,31 @@
     text-align: center;
     position: fixed;
     bottom: 0;
-    width: 100%;
+    left: 0;
     font-size: 14px;
-    z-index: 2;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    margin: 0;
 }
 
 .footer-content {
     font-size: 14px;
+    margin: 0;
+    padding: 0;
+}
+
+.footer-content p {
+    margin: 0;
+    padding: 0;
 }
 
 .footer-links {
     margin-top: 10px;
+}
+
+.footer-links p {
+    margin: 0;
+    padding: 0;
 }
 
 .footer a {
@@ -28,6 +45,6 @@
     font-weight: 500;
 }
 
-    .footer a:hover {
-        color: #ffb04c;
-    }
+.footer a:hover {
+    color: #ffb04c;
+}
