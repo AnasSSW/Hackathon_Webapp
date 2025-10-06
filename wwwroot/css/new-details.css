@@ -1,6 +1,7 @@
 ﻿body {
     background-color: #f0f2f5;
     font-family: 'Prompt', sans-serif;
+    max-width: 100%;
 }
 
 .post-details-container {
@@ -18,9 +19,9 @@
     padding: 0;
 }
 
-    .post-details-card:hover {
-        transform: translateY(-5px);
-    }
+.post-details-card:hover {
+    transform: translateY(-5px);
+}
 
 .post-image-header img {
     width: 100%;
@@ -153,20 +154,20 @@
     color: white;
 }
 
-    .btn-primary:hover {
-        box-shadow: 0 6px 15px rgba(40, 178, 235, 0.4);
-        transform: translateY(-2px);
-    }
+.btn-primary:hover {
+    box-shadow: 0 6px 15px rgba(40, 178, 235, 0.4);
+    transform: translateY(-2px);
+}
 
 .btn-edit {
     background: linear-gradient(135deg, #ffc107, #ff9800);
     color: white;
 }
 
-    .btn-edit:hover {
-        box-shadow: 0 6px 15px rgba(255, 193, 7, 0.4);
-        transform: translateY(-2px);
-    }
+.btn-edit:hover {
+    box-shadow: 0 6px 15px rgba(255, 193, 7, 0.4);
+    transform: translateY(-2px);
+}
 
 /* Participants Table */
 .participants-section {
@@ -179,14 +180,14 @@
     background-color: #f7fafc;
 }
 
-    .participants-card .card-header {
-        background-color: #e2e8f0;
-        border-radius: 12px 12px 0 0;
-        padding: 15px 20px;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #2d3748;
-    }
+.participants-card .card-header {
+    background-color: #e2e8f0;
+    border-radius: 12px 12px 0 0;
+    padding: 15px 20px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+}
 
 .participants-table {
     width: 100%;
